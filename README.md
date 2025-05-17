@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Microverse — MVP Red Social tipo Twitter
 
-## Getting Started
+Microverse es una red social estilo Twitter desarrollada con un enfoque **moderno, optimizado y escalable**, siguiendo buenas prácticas profesionales de desarrollo Front-End con **Next.js 15, React 19 y arquitectura limpia**.
 
-First, run the development server:
+---
+
+## 🚀 Tecnologías principales usadas
+
+| Tecnología                    | Descripción                                                                   |
+|-------------------------------|-------------------------------------------------------------------------------|
+| Next.js 15 (App Router)        | Framework React con soporte SSR, CSR, ISR y Server Components                |
+| React 19                       | Última versión estable de React                                              |
+| TypeScript                     | Tipado estricto y seguro                                                     |
+| Redux Toolkit + RTK Query      | Manejo de estado global y APIs con caching, invalidación automática          |
+| @tanstack/react-query (v5)     | Fetching de datos optimizado, compatible con React 19                        |
+| TailwindCSS + shadcn/ui        | Estilos modernos y componentes flexibles                                     |
+| Framer Motion                  | Animaciones suaves y controladas                                             |
+| Lucide-React                   | Librería moderna de iconos para React                                        |
+| next-themes                    | Soporte de modo claro/oscuro dinámico                                        |
+
+---
+
+## 🏗 Arquitectura aplicada
+
+### Enfoques combinados:
+- **Feature-Sliced Design:**  
+  Modularización por características de negocio (`features/posts`, `features/auth`), cada una aislada con sus componentes, lógica y servicios.
+  
+- **Clean Architecture adaptada a Front-End:**  
+  Separación estricta entre UI, lógica de negocio, servicios y entidades puras (`entities`), siguiendo principios SOLID.
+
+- **Atomic Design (en shared/components):**  
+  Componentes reutilizables y UI atómica bien documentada.
+
+---
+
+### Estructura de carpetas
+
+app/ → App Router y páginas (SSR/CSR)
+features/ → Features de negocio aisladas (posts, auth, comments)
+entities/ → Entidades puras (Post, User)
+shared/ → Compartido globalmente (UI, hooks, store, utils, services)
+public/ → Assets públicos
+
+
+---
+
+## ⚙ Herramientas de calidad y DevOps
+
+| Herramienta                    | Descripción                                           |
+|---------------------------------|-------------------------------------------------------|
+| ESLint + Prettier               | Linter y formateo de código automático               |
+| Husky + lint-staged             | Hooks de git para asegurar calidad en commits       |
+| Commitlint + Conventional Commits | Validación de mensajes de commit siguiendo estándares |
+| Jest + Testing Library          | Testing unitario e integración                       |
+| Cypress                         | Testing End-to-End (E2E)                             |
+| MSW (Mock Service Worker)       | Mocking de APIs en desarrollo y tests               |
+| GitHub Actions (previsto)       | CI/CD pipeline (build, lint, test, deploy)          |
+| Storybook (previsto)            | Documentación visual y accesible de componentes UI  |
+
+---
+
+## 🔑 Buenas prácticas aplicadas
+
+- Código limpio, modular y tipado fuerte con TypeScript.
+- Aplicación de principios **SOLID** en Front-End.
+- Uso de RTK Query + TanStack Query para fetching y caching moderno.
+- Uso de Server Components cuando es posible.
+- Separación clara por dominios de negocio (`features/`) y responsabilidades (`shared/`, `entities/`).
+- Tests unitarios, de integración y E2E implementados desde el día 1.
+- Integración de CI/CD con control de calidad en cada push.
+- Documentación clara, mantenible y escalable.
+
+---
+
+## 💡 Próximos pasos (roadmap MVP → producto escalable)
+
+1. Implementar Likes y Comments como features aisladas.
+2. Añadir WebSocket o Polling para feed en tiempo real.
+3. Completar perfil de usuario editable.
+4. Añadir sistema de notificaciones.
+5. Desplegar en Vercel con pipelines.
+6. Integrar Lighthouse CI, SonarCloud.
+7. Refinar accesibilidad y performance (Lighthouse 100%).
+8. Publicar Storybook documentando la UI completa.
+
+---
+
+## 📁 Cómo ejecutar el proyecto
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+👥 Contribuciones y estilo de trabajo
+Commits siguiendo Conventional Commits.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Ramas siguiendo la convención feature/, fix/, refactor/.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Pull Requests obligatorios con revisión y validación de CI.
