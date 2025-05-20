@@ -1,0 +1,29 @@
+// import { render, screen, fireEvent } from '@testing-library/react';
+// import LoginForm from '../LoginForm';
+
+// describe('LoginForm', () => {
+//   it('muestra inputs y botón', () => {
+//     render(
+//       <LoginForm username="" password="" onChange={() => {}} onSubmit={() => {}} loading={false} />
+//     );
+
+//     expect(screen.getByPlaceholderText('Usuario')).toBeInTheDocument();
+//     expect(screen.getByPlaceholderText('Contraseña')).toBeInTheDocument();
+//     expect(screen.getByRole('button')).toHaveTextContent('Iniciar sesión');
+//   });
+
+//   it('muestra mensaje de error si lo hay', () => {
+//     render(
+//       <LoginForm
+//         username=""
+//         password=""
+//         onChange={() => {}}
+//         onSubmit={() => {}}
+//         loading={false}
+//         error="Credenciales incorrectas"
+//       />
+//     );
+
+//     expect(screen.getByText('Credenciales incorrectas')).toBeInTheDocument();
+//   });
+// });

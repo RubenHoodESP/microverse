@@ -23,6 +23,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/api/posts/route.ts.disabled"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/api/posts/route.ts.disabled", "features/auth/components/tests/LoginForm.test.tsx.no", "features/auth/components/tests/LoginFormContainer.test.tsx.no"],
   "exclude": ["node_modules"]
 }

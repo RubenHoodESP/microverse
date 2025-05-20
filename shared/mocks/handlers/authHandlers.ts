@@ -11,9 +11,12 @@ export const authHandlers = [
     const { username, password } = await request.json() as LoginRequestBody;
 
     if (username === 'admin' && password === '1234') {
-      return HttpResponse.json({ token: 'fake-jwt-token', user: { name: 'admin' } });
+      return HttpResponse.json({
+        token: 'mock-token',
+        user: { id: '1', username: 'admin', name: 'Administrador' },
+      });
     }
 
-    return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    return HttpResponse.json({ message: 'Credenciales inválidas' }, { status: 401 });
   }),
 ];

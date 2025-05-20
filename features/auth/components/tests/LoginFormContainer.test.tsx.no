@@ -1,0 +1,64 @@
+// import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+// import { Provider } from 'react-redux';
+// import { store } from '@/shared/store';
+// import { server } from '@/shared/mocks/server';
+// import { http, HttpResponse } from 'msw';
+// import LoginFormContainer from '../LoginFormContainer';
+// import { RouterContext } from 'next/dist/shared/lib/router-context';
+// import { createMockRouter } from '@/tests/utils/mockRouter'; // custom
+
+// beforeAll(() => server.listen());
+// afterEach(() => server.resetHandlers());
+// afterAll(() => server.close());
+
+// describe('LoginFormContainer', () => {
+//   it('login exitoso redirige al home', async () => {
+//     const push = jest.fn();
+
+//     render(
+//       <Provider store={store}>
+//         <RouterContext.Provider value={createMockRouter({ push })}>
+//           <LoginFormContainer />
+//         </RouterContext.Provider>
+//       </Provider>
+//     );
+
+//     fireEvent.change(screen.getByPlaceholderText('Usuario'), {
+//       target: { value: 'admin' },
+//     });
+//     fireEvent.change(screen.getByPlaceholderText('Contraseña'), {
+//       target: { value: '1234' },
+//     });
+//     fireEvent.click(screen.getByRole('button'));
+
+//     await waitFor(() => {
+//       expect(push).toHaveBeenCalledWith('/');
+//     });
+//   });
+
+//   it('muestra error al fallar login', async () => {
+//     server.use(
+//       http.post('/api/login', () => {
+//         return HttpResponse.json({ message: 'Credenciales inválidas' }, { status: 401 });
+//       })
+//     );
+
+//     render(
+//       <Provider store={store}>
+//         <LoginFormContainer />
+//       </Provider>
+//     );
+
+//     fireEvent.change(screen.getByPlaceholderText('Usuario'), {
+//       target: { value: 'wrong' },
+//     });
+//     fireEvent.change(screen.getByPlaceholderText('Contraseña'), {
+//       target: { value: 'wrong' },
+//     });
+//     fireEvent.click(screen.getByRole('button'));
+
+//     await waitFor(() => {
+//       expect(screen.getByText(/incorrectos/i)).toBeInTheDocument();
+//     });
+//   });
+// });
