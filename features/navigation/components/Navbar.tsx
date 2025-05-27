@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Compass, User, Settings } from 'lucide-react';
-import { useTheme } from '@/shared/theme/ThemeProvider'; // importa el hook
+import { useTheme } from '@/shared/theme/useTheme'; // importa el hook
 
 type NavItem = {
   href?: string;
@@ -35,7 +35,12 @@ export default function Navbar() {
     {
       label: `Tema: ${theme === 'dark' ? 'Oscuro' : 'Claro'}`,
       icon: <Settings className="w-5 h-5" />,
-      onClick: () => setTheme(theme === 'dark' ? 'light' : 'dark'),
+      onClick: () => {
+        const nextTheme = theme === 'dark' ? 'light' : 'dark';
+        console.log('[DEBUG] Tema actual:', theme);
+        console.log('[DEBUG] Nuevo tema:', nextTheme);
+        setTheme(nextTheme);
+      },
     },
   ];
 
@@ -52,8 +57,8 @@ export default function Navbar() {
               {href ? (
                 <Link
                   href={href}
-                  className={`flex items-center gap-3 px-4 py-2 rounded-full hover:bg-gray-100 transition ${
-                    isActive ? 'font-bold text-black' : 'text-gray-600'
+                  className={`flex items-center gap-3 px-4 py-2 rounded-full hover:bg-gray-100 hover:text-background transition ${
+                    isActive ? 'font-bold text-foreground' : 'text-foreground'
                   }`}
                 >
                   {icon}
@@ -62,7 +67,7 @@ export default function Navbar() {
               ) : (
                 <button
                   onClick={onClick}
-                  className="flex items-center gap-3 px-4 py-2 rounded-full text-gray-600 hover:bg-gray-100 transition"
+                  className="flex items-center gap-3 px-4 py-2 rounded-full text-foreground hover:bg-gray-100 hover:text-background transition"
                 >
                   {icon}
                   <span className="text-base">{label}</span>

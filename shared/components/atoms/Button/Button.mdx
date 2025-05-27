@@ -1,0 +1,72 @@
+import { Meta, Story, Controls, Primary } from '@storybook/blocks';
+import * as ButtonStories from './Button.stories';
+
+<Meta of={ButtonStories} />
+
+# Button Component
+
+El componente Button es un componente atómico que proporciona una interfaz de usuario consistente para acciones y formularios.
+
+## Características
+
+- Múltiples variantes (default, destructive, outline, secondary, ghost, link)
+- Diferentes tamaños (default, sm, lg, icon)
+- Soporte para estado disabled
+- Totalmente accesible
+- Personalizable con Tailwind CSS
+
+## Uso
+
+```tsx
+import { Button } from '@/shared/components/atoms/Button';
+
+export default function MyComponent() {
+  return (
+    <Button variant="default" size="lg">
+      Click me
+    </Button>
+  );
+}
+```
+
+## Props
+
+<Controls />
+
+## Ejemplos
+
+### Botón por defecto
+
+<Primary />
+
+### Botón destructivo
+
+<Story of={ButtonStories.Destructive} />
+
+### Botón outline
+
+<Story of={ButtonStories.Outline} />
+
+### Botón secundario
+
+<Story of={ButtonStories.Secondary} />
+
+### Botón ghost
+
+<Story of={ButtonStories.Ghost} />
+
+### Botón link
+
+<Story of={ButtonStories.Link} />
+
+### Botón pequeño
+
+<Story of={ButtonStories.Small} />
+
+### Botón grande
+
+<Story of={ButtonStories.Large} />
+
+### Botón deshabilitado
+
+<Story of={ButtonStories.Disabled} />

@@ -1,0 +1,77 @@
+import { Meta, Story, Controls, Primary } from '@storybook/blocks';
+import * as InputStories from './Input.stories';
+
+<Meta of={InputStories} />
+
+# Input Component
+
+El componente Input es un componente atómico que proporciona una interfaz de usuario consistente para la entrada de texto.
+
+## Características
+
+- Múltiples variantes (default, error)
+- Diferentes tamaños (default, sm, lg)
+- Soporte para diferentes tipos de input (text, email, password, etc.)
+- Manejo de errores con mensajes
+- Totalmente accesible
+- Personalizable con Tailwind CSS
+
+## Uso
+
+```tsx
+import { Input } from '@/shared/components/atoms/Input';
+
+export default function MyComponent() {
+  return (
+    <div className="space-y-2">
+      <label htmlFor="email" className="text-sm font-medium">
+        Email
+      </label>
+      <Input
+        id="email"
+        type="email"
+        placeholder="Enter your email"
+        error="Please enter a valid email"
+      />
+    </div>
+  );
+}
+```
+
+## Props
+
+<Controls />
+
+## Ejemplos
+
+### Input por defecto
+
+<Primary />
+
+### Input con etiqueta
+
+<Story of={InputStories.WithLabel} />
+
+### Input con error
+
+<Story of={InputStories.WithError} />
+
+### Input pequeño
+
+<Story of={InputStories.Small} />
+
+### Input grande
+
+<Story of={InputStories.Large} />
+
+### Input deshabilitado
+
+<Story of={InputStories.Disabled} />
+
+### Input de email
+
+<Story of={InputStories.Email} />
+
+### Input de contraseña
+
+<Story of={InputStories.Password} />

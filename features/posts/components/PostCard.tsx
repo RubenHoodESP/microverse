@@ -6,7 +6,7 @@ type PostCardProps = {
 
 export default function PostCard({ post }: PostCardProps) {
   return (
-    <article className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+    <article className="bg-background border border-foreground rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
       <header className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 bg-gray-300 rounded-full" />
