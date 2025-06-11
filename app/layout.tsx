@@ -7,13 +7,17 @@ import { ThemeProvider } from '@/shared/theme/ThemeProvider';
 import { MSWProvider } from './msw';
 
 const geistSans = Geist({
-  variable: '--font-geist-sans',
   subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-geist-sans',
+  adjustFontFallback: true,
 });
 
 const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
   subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-geist-mono',
+  adjustFontFallback: true,
 });
 
 export const metadata: Metadata = {
@@ -27,10 +31,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased transition-colors duration-300`}
-      >
+    <html lang="es" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className="antialiased transition-colors duration-300">
         <Providers>
           <ThemeProvider>
             <MSWProvider>

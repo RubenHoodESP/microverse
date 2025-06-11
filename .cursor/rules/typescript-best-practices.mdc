@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+name: typescript-best-practices.mdc
+description: TypeScript coding standards and type safety guidelines
+globs: **/*.{ts,tsx}
+---
+
+- Enable strict mode in your `tsconfig.json` for better type checking
+- Use type aliases for complex types to improve readability
+- Leverage union types and discriminated unions for handling different states
+- Implement generics for reusable components and functions
