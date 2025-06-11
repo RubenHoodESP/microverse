@@ -1,23 +1,24 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
 // Rutas públicas que no requieren autenticación
 const publicRoutes = ['/login', '/register'];
 
-export function middleware(request: NextRequest) {
-  const token = request.cookies.get('token')?.value;
+export async function middleware(request: NextRequest) {
+  const token = await getToken({ req: request });
   const isPublicRoute = publicRoutes.some(route => 
     request.nextUrl.pathname.startsWith(route)
   );
 
-  // Si no hay token y no es una ruta pública, redirigir a login
+  // Si no hay sesión y no es una ruta pública, redirigir a login
   if (!token && !isPublicRoute) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  // Si hay token y es una ruta pública, redirigir a feed
+  // Si hay sesión y es una ruta pública, redirigir a home
   if (token && isPublicRoute) {
-    return NextResponse.redirect(new URL('/feed', request.url));
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
   return NextResponse.next();

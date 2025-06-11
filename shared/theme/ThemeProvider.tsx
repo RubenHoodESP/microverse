@@ -1,40 +1,47 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { Theme, themes } from './themes';
+import { createContext, useState, useEffect, ReactNode } from 'react';
 
-type ThemeContextType = {
+type Theme = 'light' | 'dark';
+
+interface ThemeContextType {
   theme: Theme;
-  setTheme: (t: Theme) => void;
-};
+  setTheme: (theme: Theme) => void;
+  toggleTheme: () => void;
+}
 
 export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('light');
+interface ThemeProviderProps {
+  children: ReactNode;
+}
 
-  const applyTheme = (t: Theme) => {
-    const vars = themes[t];
-    const root = document.documentElement;
-    for (const [key, value] of Object.entries(vars)) {
-      root.style.setProperty(key, value);
-    }
-  };
+export function ThemeProvider({ children }: ThemeProviderProps) {
+  const [theme, setTheme] = useState<Theme>('light');
 
   useEffect(() => {
-    const saved = localStorage.getItem('theme') as Theme | null;
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const resolved = saved ?? (systemPrefersDark ? 'dark' : 'light');
-
-    setThemeState(resolved);
-    applyTheme(resolved);
+    // Verificar si hay un tema guardado en localStorage
+    const savedTheme = localStorage.getItem('theme') as Theme;
+    if (savedTheme) {
+      setTheme(savedTheme);
+      document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      // Si no hay tema guardado, usar la preferencia del sistema
+      setTheme('dark');
+      document.documentElement.classList.add('dark');
+    }
   }, []);
 
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme);
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
     localStorage.setItem('theme', newTheme);
-    applyTheme(newTheme);
+    document.documentElement.classList.toggle('dark', newTheme === 'dark');
   };
 
-  return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
 }
