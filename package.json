@@ -29,6 +29,7 @@
     "bcryptjs": "^3.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "framer-motion": "^12.12.1",
     "microverse": "file:",
     "next": "15.3.2",
@@ -61,7 +62,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/jest": "^29.5.14",
-    "@types/node": "^20",
+    "@types/node": "^20.19.0",
     "@types/react": "^19.1.4",
     "@types/react-dom": "^19.1.5",
     "@types/testing-library__jest-dom": "^5.14.9",
@@ -93,7 +94,7 @@
     "tailwindcss": "^4.1.7",
     "ts-jest": "^29.3.4",
     "ts-node": "^10.9.2",
-    "typescript": "^5",
+    "typescript": "^5.8.3",
     "undici": "^7.9.0",
     "vitest": "^3.1.4"
   }

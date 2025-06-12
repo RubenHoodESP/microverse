@@ -15,6 +15,14 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
+        if (process.env.MOCK_MODE === "true") {
+          return {
+            id: "1",
+            name: "Mock User",
+            email: credentials?.email || "mock@example.com",
+            username: "mockuser",
+          };
+        }
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Credenciales inválidas");
         }

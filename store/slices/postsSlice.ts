@@ -1,17 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Post } from '@/entities/post/Post';
 
-interface Post {
-  id: string;
-  content: string;
-  author: {
-    id: string;
-    name: string;
-    image?: string;
-  };
-  createdAt: string;
-  likes: number;
-  comments: number;
-}
 
 interface PostsState {
   posts: Post[];

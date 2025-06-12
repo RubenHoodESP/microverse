@@ -1,34 +1,123 @@
 @import "tailwindcss";
 
 :root {
+  /* Paleta de colores principal */
+  --primary-50: #e6f1ff;
+  --primary-100: #cce3ff;
+  --primary-200: #99c7ff;
+  --primary-300: #66abff;
+  --primary-400: #338fff;
+  --primary-500: #0073ff;
+  --primary-600: #005ccc;
+  --primary-700: #004599;
+  --primary-800: #002e66;
+  --primary-900: #001733;
+
+  /* Paleta de colores secundaria */
+  --secondary-50: #e6fff0;
+  --secondary-100: #ccffe1;
+  --secondary-200: #99ffc3;
+  --secondary-300: #66ffa5;
+  --secondary-400: #33ff87;
+  --secondary-500: #00ff69;
+  --secondary-600: #00cc54;
+  --secondary-700: #00993f;
+  --secondary-800: #00662a;
+  --secondary-900: #003315;
+
+  /* Colores de estado */
+  --success: #22c55e;
+  --error: #ef4444;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+
+  /* Tema claro por defecto */
   --background: #ffffff;
+  --background-secondary: #f5f5f5;
   --foreground: #171717;
+  --foreground-secondary: #4a4a4a;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+/* Tema oscuro */
+.dark {
+  --background: #0a0a0a;
+  --background-secondary: #1a1a1a;
+  --foreground: #ededed;
+  --foreground-secondary: #a3a3a3;
+  --primary-500: #3b82f6;
+  --secondary-500: #10b981;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-}
+/* Estilos base */
+@layer base {
+  html {
+    color-scheme: light dark;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --muted: #999999;
-    --primary: #66b2ff;
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  * {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
   }
 }
 
-.text-color {
-  color: var(--foreground);
+/* Componentes comunes */
+@layer components {
+  .btn {
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .btn-primary {
+    background-color: var(--primary-500);
+    color: white;
+  }
+  .btn-primary:hover {
+    background-color: var(--primary-600);
+  }
+
+  .btn-secondary {
+    background-color: var(--secondary-500);
+    color: white;
+  }
+  .btn-secondary:hover {
+    background-color: var(--secondary-600);
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    color: var(--foreground);
+    transition: all 0.2s ease-in-out;
+  }
+  .nav-link:hover {
+    background-color: var(--foreground);
+    color: var(--background);
+  }
+
+  .nav-link-active {
+    background-color: var(--primary-500);
+    color: white;
+    font-weight: 700;
+  }
 }
 
-.icon-color {
-  stroke: var(--foreground);
-  fill: var(--foreground);
+/* Utilidades */
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(to right, var(--primary-500), var(--secondary-500));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }

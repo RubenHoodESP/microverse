@@ -10,6 +10,14 @@ export function useAuth() {
   const login = async (email: string, password: string) => {
     try {
       setError(null);
+      
+      // Mock mode
+      if (process.env.MOCK_MODE === 'true') {
+        router.push("/");
+        router.refresh();
+        return true;
+      }
+
       const result = await signIn("credentials", {
         email,
         password,

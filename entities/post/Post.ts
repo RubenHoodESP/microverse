@@ -1,3 +1,5 @@
+import { User } from "@/types/user";
+
 export type Post = {
   id: string;
   title: string;
@@ -9,4 +11,17 @@ export type Post = {
     username: string;
     avatarUrl?: string;
   };
+  likes: User[];
+  comments: Comment[];
+};
+
+export type Comment = {
+  id: string;
+  content: string;
+  author: {
+    id: string;
+    name: string;
+    image?: string;
+  };
+  createdAt: string;
 };

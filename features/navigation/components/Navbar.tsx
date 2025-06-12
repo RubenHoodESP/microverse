@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Compass, User, Settings } from 'lucide-react';
-import { useTheme } from '@/shared/theme/useTheme'; // importa el hook
+import { useTheme } from '@/shared/theme/useTheme';
 
 type NavItem = {
   href?: string;
@@ -37,8 +37,6 @@ export default function Navbar() {
       icon: <Settings className="w-5 h-5" />,
       onClick: () => {
         const nextTheme = theme === 'dark' ? 'light' : 'dark';
-        console.log('[DEBUG] Tema actual:', theme);
-        console.log('[DEBUG] Nuevo tema:', nextTheme);
         setTheme(nextTheme);
       },
     },
@@ -55,20 +53,12 @@ export default function Navbar() {
           return (
             <li key={label}>
               {href ? (
-                <Link
-                  href={href}
-                  className={`flex items-center gap-3 px-4 py-2 rounded-full hover:bg-gray-100 hover:text-background transition ${
-                    isActive ? 'font-bold text-foreground' : 'text-foreground'
-                  }`}
-                >
+                <Link href={href} className={`nav-link ${isActive ? 'nav-link-active' : ''}`}>
                   {icon}
                   <span className="text-base">{label}</span>
                 </Link>
               ) : (
-                <button
-                  onClick={onClick}
-                  className="flex items-center gap-3 px-4 py-2 rounded-full text-foreground hover:bg-gray-100 hover:text-background transition"
-                >
+                <button onClick={onClick} className="nav-link">
                   {icon}
                   <span className="text-base">{label}</span>
                 </button>
