@@ -1,0 +1,58 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Versiones de Frontend
+name: frontend-versions.mdc
+description: Guía de versiones y características de frontend
+globs: **/*.{ts,tsx}
+
+## Versiones Principales
+- Next.js 15.x
+- React 19.x
+- TypeScript 5.x
+- Node.js 18.x o superior
+
+## Características de Next.js 14
+- App Router
+- Server Components por defecto
+- Streaming y Suspense
+- Server Actions
+- Route Handlers
+- Image Optimization
+- Font Optimization
+- Metadata API
+
+## Características de React 18
+- Concurrent Features
+- Automatic Batching
+- Transitions
+- Suspense en Server Components
+- useId Hook
+- useTransition Hook
+- useDeferredValue Hook
+
+## TypeScript
+- Strict Mode
+- Path Aliases
+- Type Inference
+- Generics
+- Utility Types
+- Type Guards
+
+## Herramientas y Librerías
+- Tailwind CSS para estilos
+- Prisma para base de datos
+- NextAuth.js para autenticación
+- React Query para data fetching
+- Zod para validación
+- Jest y React Testing Library para testing
+
+## Optimizaciones
+- Code Splitting
+- Tree Shaking
+- Bundle Analysis
+- Image Optimization
+- Font Optimization
+- Route Prefetching

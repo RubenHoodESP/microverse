@@ -1,0 +1,35 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Estructura del Proyecto
+name: project-structure.mdc
+description: Guía de estructura del proyecto Next.js 15
+globs: **/*.{ts,tsx}
+
+## Estructura de Directorios
+- `/app`: Páginas y rutas de la aplicación
+- `/components`: Componentes reutilizables
+  - `/atoms`: Componentes básicos (botones, inputs, etc.)
+  - `/molecules`: Componentes compuestos
+  - `/organisms`: Componentes complejos
+  - `/templates`: Plantillas de página
+- `/features`: Funcionalidades específicas
+  - `/auth`: Autenticación
+  - `/posts`: Gestión de posts
+  - `/profile`: Perfiles de usuario
+- `/shared`: Utilidades compartidas
+  - `/hooks`: Custom hooks
+  - `/utils`: Funciones utilitarias
+  - `/types`: Tipos TypeScript
+- `/store`: Estado global (Redux/RTK)
+- `/styles`: Estilos globales
+- `/lib`: Configuraciones y adaptadores
+- `/public`: Archivos estáticos
+
+## Convenciones de Nombrado
+- Componentes: PascalCase (ej: UserProfile.tsx)
+- Hooks: camelCase con prefijo 'use' (ej: useAuth.ts)
+- Utilidades: camelCase (ej: formatDate.ts)
+- Tipos: PascalCase con sufijo 'Type' (ej: UserType.ts)

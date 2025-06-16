@@ -1,0 +1,28 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Principios SOLID y Patrones
+name: solid-principles.mdc
+description: Guía de principios SOLID y patrones de diseño
+globs: **/*.{ts,tsx}
+
+## Principios SOLID
+- Single Responsibility: Cada componente/clase debe tener una única responsabilidad
+- Open/Closed: Extender funcionalidad sin modificar código existente
+- Liskov Substitution: Subtipos deben ser sustituibles por sus tipos base
+- Interface Segregation: Interfaces pequeñas y específicas
+- Dependency Inversion: Depender de abstracciones, no implementaciones
+## Patrones de Diseño
+- Repository Pattern: Para acceso a datos
+- Factory Pattern: Para creación de objetos complejos
+- Strategy Pattern: Para algoritmos intercambiables
+- Observer Pattern: Para eventos y suscripciones
+- Decorator Pattern: Para extender funcionalidad
+
+## Ejemplos de Implementación
+- Usar interfaces para definir contratos
+- Implementar inyección de dependencias
+- Separar lógica de negocio de la UI
+- Utilizar composición sobre herencia

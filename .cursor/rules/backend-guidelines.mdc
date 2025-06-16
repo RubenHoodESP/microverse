@@ -1,0 +1,52 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Guías de Backend
+name: backend-guidelines.mdc
+description: Guía de implementación y mejores prácticas para el backend
+globs: **/*.{ts,tsx}
+
+## Estructura de API
+- Usar Route Handlers de Next.js 13+
+- Implementar endpoints en `/app/api`
+- Seguir RESTful principles
+- Usar HTTP status codes apropiados
+- Implementar validación de datos
+
+## Autenticación y Seguridad
+- Usar JWT para autenticación
+- Implementar bcrypt para hash de contraseñas
+- Validar tokens en middleware
+- Sanitizar inputs
+- Implementar rate limiting
+- Usar HTTPS en producción
+
+## Base de Datos
+- Usar Prisma como ORM
+- Implementar migraciones
+- Seguir el schema definido en [schema.prisma](mdc:prisma/schema.prisma)
+- Usar transacciones cuando sea necesario
+- Implementar índices apropiados
+
+## Manejo de Errores
+- Implementar try-catch en endpoints
+- Usar tipos de error específicos
+- Logging apropiado
+- Mensajes de error descriptivos
+- Manejo de errores consistente
+
+## Testing
+- Unit tests para funciones de utilidad
+- Integration tests para endpoints
+- Mock de base de datos
+- Test de casos de error
+- Test de validación de datos
+
+## Performance
+- Implementar caching
+- Optimizar queries
+- Usar paginación
+- Implementar rate limiting
+- Monitorear tiempos de respuesta

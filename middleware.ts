@@ -2,99 +2,50 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
-// 1. Constantes y tipos para mejor mantenibilidad
-const ROUTES = {
-  PUBLIC: new Set(['/login', '/register']),
-  STATIC: new Set(['/_next', '/static', '/api', '/favicon.ico', '/public']),
-  HOME: '/',
-  LOGIN: '/login'
-} as const;
+// Rutas que no requieren autenticación
+const publicRoutes = [
+  '/login',
+  '/register',
+  '/api/auth',
+  '/_next',
+  '/favicon.ico',
+  '/public'
+];
 
-// 2. Interfaces para mejor tipado
-interface AuthResult {
-  isAuthenticated: boolean;
-  redirectUrl?: string;
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Obtener el token de sesión de NextAuth
+  const token = await getToken({ 
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET
+  });
+
+  // Si el usuario está autenticado y trata de acceder a login/register
+  if (token && (pathname === '/login' || pathname === '/register')) {
+    return NextResponse.redirect(new URL('/', request.url));
+  }
+
+  // Si el usuario no está autenticado y la ruta no es pública
+  if (!token && !publicRoutes.some(route => pathname.startsWith(route))) {
+    const url = new URL('/login', request.url);
+    url.searchParams.set('callbackUrl', encodeURIComponent(pathname));
+    return NextResponse.redirect(url);
+  }
+
+  return NextResponse.next();
 }
 
-// 3. Clase para manejar la lógica de autenticación
-class AuthMiddleware {
-  private static instance: AuthMiddleware;
-  
-  private constructor() {}
-
-  public static getInstance(): AuthMiddleware {
-    if (!AuthMiddleware.instance) {
-      AuthMiddleware.instance = new AuthMiddleware();
-    }
-    return AuthMiddleware.instance;
-  }
-
-  private async checkAuthentication(
-    request: NextRequest, 
-    pathname: string
-  ): Promise<AuthResult> {
-    const token = await getToken({ req: request });
-    const isPublic = this.isPublicRoute(pathname);
-
-    if (!token && !isPublic) {
-      return { isAuthenticated: false, redirectUrl: ROUTES.LOGIN };
-    }
-
-    if (token && isPublic) {
-      return { isAuthenticated: true, redirectUrl: ROUTES.HOME };
-    }
-
-    return { isAuthenticated: !!token };
-  }
-
-  public async handle(request: NextRequest): Promise<NextResponse> {
-    try {
-      // Verificación temprana de modo mock
-      if (this.isMockMode()) {
-        return NextResponse.next();
-      }
-
-      const pathname = request.nextUrl.pathname;
-      
-      // Verificación temprana de rutas estáticas
-      if (this.isStaticRoute(pathname)) {
-        return NextResponse.next();
-      }
-
-      const authResult = await this.checkAuthentication(request, pathname);
-      
-      if (authResult.redirectUrl) {
-        return NextResponse.redirect(new URL(authResult.redirectUrl, request.url));
-      }
-
-      return NextResponse.next();
-    } catch (error) {
-      console.error('Middleware error:', error);
-      return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
-    }
-  }
-
-  private isMockMode(): boolean {
-    return process.env.MOCK_MODE === 'true';
-  }
-
-  private isStaticRoute(pathname: string): boolean {
-    return Array.from(ROUTES.STATIC).some(route => pathname.startsWith(route));
-  }
-
-  private isPublicRoute(pathname: string): boolean {
-    return Array.from(ROUTES.PUBLIC).some(route => pathname.startsWith(route));
-  }
-}
-
-  // 4. Función principal del middleware
-export async function middleware(request: NextRequest): Promise<NextResponse> {
-  return AuthMiddleware.getInstance().handle(request);
-}
-
-// 5. Configuración optimizada del matcher
+// Configurar en qué rutas se ejecuta el middleware
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|public|static).*)',
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     */
+    '/((?!_next/static|_next/image|favicon.ico|public/).*)',
   ],
 };

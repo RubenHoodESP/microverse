@@ -20,9 +20,31 @@ export default function RegisterPage() {
     e.preventDefault();
     setError('');
 
-    const result = await register(formData);
-    if (!result.success) {
-      setError(result.error || 'Error al registrar');
+    try {
+      // Validación básica
+      if (!formData.email || !formData.username || !formData.password) {
+        setError('Todos los campos son requeridos');
+        return;
+      }
+
+      // Validación de email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        setError('Por favor, introduce un email válido');
+        return;
+      }
+
+      // Validación de contraseña
+      if (formData.password.length < 6) {
+        setError('La contraseña debe tener al menos 6 caracteres');
+        return;
+      }
+
+      await register(formData.name, formData.email, formData.password);
+      router.push('/');
+    } catch (err) {
+      console.error('Error en el registro:', err);
+      setError('Ha ocurrido un error durante el registro. Por favor, intenta de nuevo.');
     }
   };
 

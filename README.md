@@ -6,26 +6,26 @@ Microverse es una red social estilo Twitter desarrollada con un enfoque **modern
 
 ## 🚀 Tecnologías principales usadas
 
-| Tecnología                    | Descripción                                                                   |
-|-------------------------------|-------------------------------------------------------------------------------|
-| Next.js 15 (App Router)        | Framework React con soporte SSR, CSR, ISR y Server Components                |
-| React 19                       | Última versión estable de React                                              |
-| TypeScript                     | Tipado estricto y seguro                                                     |
-| Redux Toolkit + RTK Query      | Manejo de estado global y APIs con caching, invalidación automática          |
-| @tanstack/react-query (v5)     | Fetching de datos optimizado, compatible con React 19                        |
-| TailwindCSS + shadcn/ui        | Estilos modernos y componentes flexibles                                     |
-| Framer Motion                  | Animaciones suaves y controladas                                             |
-| Lucide-React                   | Librería moderna de iconos para React                                        |
-| next-themes                    | Soporte de modo claro/oscuro dinámico                                        |
+| Tecnología                 | Descripción                                                         |
+| -------------------------- | ------------------------------------------------------------------- |
+| Next.js 15 (App Router)    | Framework React con soporte SSR, CSR, ISR y Server Components       |
+| React 19                   | Última versión estable de React                                     |
+| TypeScript                 | Tipado estricto y seguro                                            |
+| Redux Toolkit + RTK Query  | Manejo de estado global y APIs con caching, invalidación automática |
+| @tanstack/react-query (v5) | Fetching de datos optimizado, compatible con React 19               |
+| TailwindCSS + shadcn/ui    | Estilos modernos y componentes flexibles                            |
+| Framer Motion              | Animaciones suaves y controladas                                    |
+| Lucide-React               | Librería moderna de iconos para React                               |
+| next-themes                | Soporte de modo claro/oscuro dinámico                               |
 
 ---
 
 ## 🏗 Arquitectura aplicada
 
 ### Enfoques combinados:
+
 - **Feature-Sliced Design:**  
   Modularización por características de negocio (`features/posts`, `features/auth`), cada una aislada con sus componentes, lógica y servicios.
-  
 - **Clean Architecture adaptada a Front-End:**  
   Separación estricta entre UI, lógica de negocio, servicios y entidades puras (`entities`), siguiendo principios SOLID.
 
@@ -42,21 +42,20 @@ entities/ → Entidades puras (Post, User)
 shared/ → Compartido globalmente (UI, hooks, store, utils, services)
 public/ → Assets públicos
 
-
 ---
 
 ## ⚙ Herramientas de calidad y DevOps
 
-| Herramienta                    | Descripción                                           |
-|---------------------------------|-------------------------------------------------------|
-| ESLint + Prettier               | Linter y formateo de código automático               |
-| Husky + lint-staged             | Hooks de git para asegurar calidad en commits       |
+| Herramienta                       | Descripción                                           |
+| --------------------------------- | ----------------------------------------------------- |
+| ESLint + Prettier                 | Linter y formateo de código automático                |
+| Husky + lint-staged               | Hooks de git para asegurar calidad en commits         |
 | Commitlint + Conventional Commits | Validación de mensajes de commit siguiendo estándares |
-| Jest + Testing Library          | Testing unitario e integración                       |
-| Cypress                         | Testing End-to-End (E2E)                             |
-| MSW (Mock Service Worker)       | Mocking de APIs en desarrollo y tests               |
-| GitHub Actions (previsto)       | CI/CD pipeline (build, lint, test, deploy)          |
-| Storybook (previsto)            | Documentación visual y accesible de componentes UI  |
+| Jest + Testing Library            | Testing unitario e integración                        |
+| Cypress                           | Testing End-to-End (E2E)                              |
+| MSW (Mock Service Worker)         | Mocking de APIs en desarrollo y tests                 |
+| GitHub Actions (previsto)         | CI/CD pipeline (build, lint, test, deploy)            |
+| Storybook (previsto)              | Documentación visual y accesible de componentes UI    |
 
 ---
 
@@ -98,3 +97,4 @@ Commits siguiendo Conventional Commits.
 Ramas siguiendo la convención feature/, fix/, refactor/.
 
 Pull Requests obligatorios con revisión y validación de CI.
+```

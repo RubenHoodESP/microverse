@@ -29,7 +29,7 @@ export default function CreatePost() {
             username: 'mockuser',
             avatarUrl: 'https://i.pravatar.cc/150?img=1',
           },
-          likes:[],
+          likes: [],
           comments: [],
         };
 
@@ -54,7 +54,7 @@ export default function CreatePost() {
             value={postContent}
             onChange={(e) => setPostContent(e.target.value)}
             placeholder="¿Qué está pasando?"
-            className="w-full p-4 text-lg resize-none focus:outline-none bg-transparent"
+            className="w-full p-4 text-lg resize-none focus:outline-none bg-transparent placeholder:text-gray-500"
             rows={3}
           />
         </div>

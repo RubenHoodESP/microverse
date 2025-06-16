@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Compass, User, Settings } from 'lucide-react';
 import { useTheme } from '@/shared/theme/useTheme';
+import { useGetCurrentUserQuery } from '@/store/services/userApi';
 
 type NavItem = {
   href?: string;
@@ -15,6 +16,7 @@ type NavItem = {
 export default function Navbar() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
+  const { data: currentUser } = useGetCurrentUserQuery();
 
   const navItems: NavItem[] = [
     {
@@ -28,7 +30,7 @@ export default function Navbar() {
       icon: <Compass className="w-5 h-5" />,
     },
     {
-      href: '/profile',
+      href: currentUser ? `/profile/${currentUser.username}` : '/login',
       label: 'Perfil',
       icon: <User className="w-5 h-5" />,
     },

@@ -1,65 +1,76 @@
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { NextAuthOptions } from "next-auth";
-import { prisma } from "@/lib/prisma";
+import NextAuth, { DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
-import NextAuth from "next-auth/next";
+import { PrismaClient } from "@prisma/client";
+import { AuthService } from "@/src/core/application/auth/AuthService";
+import { PrismaUserRepository } from "@/src/infrastructure/persistence/PrismaUserRepository";
 
-export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+// Extender el tipo de sesión para incluir el id
+declare module "next-auth" {
+  interface Session extends DefaultSession {
+    user: {
+      id: string;
+    } & DefaultSession["user"]
+  }
+}
+
+const prisma = new PrismaClient();
+const userRepository = new PrismaUserRepository(prisma);
+const authService = new AuthService(userRepository, process.env.NEXTAUTH_SECRET || '');
+
+const handler = NextAuth({
   providers: [
     CredentialsProvider({
-      name: "credentials",
+      name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (process.env.MOCK_MODE === "true") {
-          return {
-            id: "1",
-            name: "Mock User",
-            email: credentials?.email || "mock@example.com",
-            username: "mockuser",
-          };
-        }
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Credenciales inválidas");
+          return null;
         }
 
-        const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email
-          }
-        });
+        try {
+          const { user } = await authService.login({
+            email: credentials.email,
+            password: credentials.password
+          });
 
-        if (!user || !user?.password) {
-          throw new Error("Credenciales inválidas");
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            image: user.image
+          };
+        } catch (error) {
+          return null;
         }
-
-        const isCorrectPassword = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
-
-        if (!isCorrectPassword) {
-          throw new Error("Credenciales inválidas");
-        }
-
-        return user;
       }
     })
   ],
   pages: {
     signIn: "/login",
+    error: "/login"
   },
-  debug: process.env.NODE_ENV === "development",
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60 // 30 días
   },
-  secret: process.env.NEXTAUTH_SECRET,
-};
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+      }
+      return session;
+    }
+  },
+  secret: process.env.NEXTAUTH_SECRET
+});
 
-const handler = NextAuth(authOptions);
-
-export { handler as GET, handler as POST }; 
+export { handler as GET, handler as POST };

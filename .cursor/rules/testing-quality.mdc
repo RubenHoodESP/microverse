@@ -1,0 +1,35 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Testing y Calidad
+name: testing-quality.mdc
+description: Guía de testing y calidad de código
+globs: **/*.{ts,tsx,test.ts,test.tsx}
+
+## Testing
+- Unit Tests: Jest + React Testing Library
+- Integration Tests: Cypress
+- E2E Tests: Playwright
+- Component Tests: Storybook
+
+## Calidad de Código
+- ESLint: Configuración estricta
+- Prettier: Formato consistente
+- Husky: Git hooks
+- TypeScript: strict mode
+- SonarQube: Análisis de calidad
+## Cobertura de Tests
+- Mínimo 80% de cobertura
+- Tests críticos para features principales
+- Snapshot testing para UI
+- Tests de integración para flujos críticos
+- Tests de rendimiento
+
+## Mejores Prácticas
+- TDD cuando sea posible
+- Documentación de tests
+- CI/CD pipeline
+- Code review process
+- Monitoreo de calidad

@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import bcrypt from "bcryptjs";
+import { registerUser } from "@/lib/auth";
 import { z } from "zod";
 
+// Esquema de validación
 const registerSchema = z.object({
   email: z.string().email("Email inválido"),
   username: z.string().min(3, "El username debe tener al menos 3 caracteres"),
@@ -10,52 +10,34 @@ const registerSchema = z.object({
   name: z.string().optional(),
 });
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const body = await req.json();
-    const { email, username, password, name } = registerSchema.parse(body);
+    const body = await request.json();
+    
+    // Validar los datos de entrada
+    const validatedData = registerSchema.parse(body);
+    
+    // Registrar el usuario usando la función de lib/auth.ts
+    const { user, token } = await registerUser(
+      validatedData.email,
+      validatedData.username,
+      validatedData.password,
+      validatedData.name
+    );
 
-    // Verificar si el email ya existe
-    const existingEmail = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (existingEmail) {
-      return NextResponse.json(
-        { error: "El email ya está registrado" },
-        { status: 400 }
-      );
-    }
-
-    // Verificar si el username ya existe
-    const existingUsername = await prisma.user.findUnique({
-      where: { username },
-    });
-
-    if (existingUsername) {
-      return NextResponse.json(
-        { error: "El username ya está en uso" },
-        { status: 400 }
-      );
-    }
-
-    // Encriptar la contraseña
-    const hashedPassword = await bcrypt.hash(password, 12);
-
-    // Crear el usuario
-    const user = await prisma.user.create({
-      data: {
-        email,
-        username,
-        name,
-        password: hashedPassword,
+    return NextResponse.json(
+      { 
+        user: {
+          id: user.id,
+          email: user.email,
+          username: user.username,
+          name: user.name,
+          image: user.image
+        },
+        token 
       },
-    });
-
-    // Eliminar la contraseña del objeto de respuesta
-    const { password: _, ...userWithoutPassword } = user;
-
-    return NextResponse.json(userWithoutPassword);
+      { status: 201 }
+    );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -65,8 +47,8 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(
-      { error: "Error al registrar el usuario" },
-      { status: 500 }
+      { error: error instanceof Error ? error.message : "Error al registrar usuario" },
+      { status: 400 }
     );
   }
 } 

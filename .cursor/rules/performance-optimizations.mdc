@@ -1,0 +1,36 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Optimizaciones y Rendimiento
+name: performance-optimizations.mdc
+description: Guía de optimizaciones para Next.js 15
+globs: **/*.{ts,tsx}
+
+## Optimizaciones de Next.js
+- Usar Server Components por defecto
+- Implementar Streaming y Suspense
+- Aprovechar el caché de Next.js
+- Utilizar Image Optimization
+- Implementar Route Handlers
+## Optimizaciones de React
+- Usar useMemo y useCallback apropiadamente
+- Implementar lazy loading de componentes
+- Optimizar re-renders con React.memo
+- Utilizar Context API eficientemente
+- Implementar virtualización para listas largas
+
+## Optimizaciones de TypeScript
+- Usar tipos estrictos
+- Implementar type guards
+- Utilizar utility types
+- Evitar any
+- Documentar tipos complejos
+
+## Mejores Prácticas
+- Implementar code splitting
+- Optimizar bundle size
+- Usar tree shaking
+- Implementar caching strategies
+- Optimizar imágenes y assets
