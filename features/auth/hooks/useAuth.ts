@@ -1,115 +1,46 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { authService } from '../services/authService';
-import { LoginCredentials, RegisterCredentials, AuthState, User } from '../types';
-import Cookies from 'js-cookie';
-
-const initialState: AuthState = {
-  user: null,
-  token: null,
-  isAuthenticated: false,
-  isLoading: false,
-  error: null,
-};
+import { useLoginMutation, useRegisterMutation } from '../services/authApi';
+import { LoginCredentials, RegisterCredentials } from '../types';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../model/authSlice';
 
 export const useAuth = () => {
-  const [state, setState] = useState<AuthState>(initialState);
   const router = useRouter();
+  const dispatch = useDispatch();
+  const [loginMutation, { isLoading: isLoginLoading, error: loginError }] = useLoginMutation();
+  const [registerMutation, { isLoading: isRegisterLoading, error: registerError }] = useRegisterMutation();
 
   const login = useCallback(async (credentials: LoginCredentials) => {
     try {
-      setState(prev => ({ ...prev, isLoading: true, error: null }));
-      const response = await authService.login(credentials);
-      
-      setState({
-        user: response.user,
-        token: response.token,
-        isAuthenticated: true,
-        isLoading: false,
-        error: null,
-      });
-
+      const result = await loginMutation(credentials).unwrap();
+      dispatch(setCredentials(result));
       router.push('/feed');
+      router.refresh();
     } catch (error) {
-      setState(prev => ({
-        ...prev,
-        isLoading: false,
-        error: error instanceof Error ? error.message : 'Error al iniciar sesión',
-      }));
+      console.error('Error en login:', error);
+      throw error;
     }
-  }, [router]);
+  }, [loginMutation, dispatch, router]);
 
   const register = useCallback(async (credentials: RegisterCredentials) => {
     try {
-      setState(prev => ({ ...prev, isLoading: true, error: null }));
-      const response = await authService.register(credentials);
-      
-      setState({
-        user: response.user,
-        token: response.token,
-        isAuthenticated: true,
-        isLoading: false,
-        error: null,
-      });
-
+      const result = await registerMutation(credentials).unwrap();
+      dispatch(setCredentials(result));
       router.push('/feed');
+      router.refresh();
     } catch (error) {
-      setState(prev => ({
-        ...prev,
-        isLoading: false,
-        error: error instanceof Error ? error.message : 'Error al registrarse',
-      }));
+      console.error('Error en registro:', error);
+      throw error;
     }
-  }, [router]);
-
-  const logout = useCallback(async () => {
-    try {
-      setState(prev => ({ ...prev, isLoading: true, error: null }));
-      await authService.logout();
-      
-      setState(initialState);
-      router.push('/login');
-    } catch (error) {
-      setState(prev => ({
-        ...prev,
-        isLoading: false,
-        error: error instanceof Error ? error.message : 'Error al cerrar sesión',
-      }));
-    }
-  }, [router]);
-
-  const checkAuth = useCallback(async () => {
-    const token = Cookies.get('token');
-    if (!token) return;
-
-    try {
-      setState(prev => ({ ...prev, isLoading: true, error: null }));
-      const response = await authService.getCurrentUser();
-      
-      setState({
-        user: response.user,
-        token: response.token,
-        isAuthenticated: true,
-        isLoading: false,
-        error: null,
-      });
-    } catch (error) {
-      Cookies.remove('token');
-      setState(initialState);
-    }
-  }, []);
-
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+  }, [registerMutation, dispatch, router]);
 
   return {
-    ...state,
     login,
     register,
-    logout,
-    checkAuth,
+    isLoading: isLoginLoading || isRegisterLoading,
+    error: loginError || registerError,
   };
 };

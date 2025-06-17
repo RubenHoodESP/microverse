@@ -1,8 +1,29 @@
 import '@testing-library/jest-dom';
-import './__tests__/mocks/components';
 
-// Configuración global para fetch en tests
+// Mock de Request y Response para las pruebas de API
+global.Request = jest.fn().mockImplementation((input, init) => ({
+  ...input,
+  ...init,
+})) as any;
+
+global.Response = jest.fn().mockImplementation((body, init) => ({
+  ...init,
+  body,
+})) as any;
+
+// Mock de fetch
 global.fetch = jest.fn();
+
+// Mock de next/navigation
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    back: jest.fn(),
+  }),
+  usePathname: () => '/',
+  useSearchParams: () => new URLSearchParams(),
+}));
 
 beforeEach(() => {
   jest.clearAllMocks();

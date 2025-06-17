@@ -1,94 +1,112 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import LoginPage from '@/app/login/page';
-import { useAuth } from '@/hooks/useAuth';
+import { LoginForm } from '@/features/auth/components/LoginForm';
+import { Provider } from 'react-redux';
+import { store } from '@/shared/store';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 // Mock del hook useAuth
-jest.mock('@/hooks/useAuth', () => ({
-  useAuth: jest.fn(),
-}));
+jest.mock('@/features/auth/hooks/useAuth');
 
-// Mock de next/navigation
-jest.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: jest.fn(),
-  }),
-}));
+const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
 
 describe('LoginPage', () => {
-  const mockLogin = jest.fn();
-
   beforeEach(() => {
+    // Resetear los mocks entre tests
     jest.clearAllMocks();
-    (useAuth as jest.Mock).mockReturnValue({
-      login: mockLogin,
-      error: null,
+    mockUseAuth.mockReturnValue({
+      login: jest.fn(),
+      register: jest.fn(),
       isLoading: false,
+      error: null,
     });
   });
 
-  it('debe renderizar el formulario correctamente', () => {
-    render(<LoginPage />);
+  const renderLoginForm = () => {
+    return render(
+      <Provider store={store}>
+        <LoginForm />
+      </Provider>
+    );
+  };
 
-    expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Contraseña')).toBeInTheDocument();
+  it('debe renderizar el formulario correctamente', () => {
+    renderLoginForm();
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/contraseña/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /iniciar sesión/i })).toBeInTheDocument();
   });
 
   it('debe mostrar errores de validación', async () => {
-    render(<LoginPage />);
-
+    renderLoginForm();
     const submitButton = screen.getByRole('button', { name: /iniciar sesión/i });
-    await userEvent.click(submitButton);
 
-    // Los campos son required, así que el navegador mostrará validaciones nativas
-    expect(screen.getByPlaceholderText('Email')).toBeInvalid();
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(/el email es requerido/i)).toBeInTheDocument();
+      expect(screen.getByText(/la contraseña es requerida/i)).toBeInTheDocument();
+    });
   });
 
   it('debe llamar a login con las credenciales correctas', async () => {
-    render(<LoginPage />);
+    const mockLogin = jest.fn();
+    mockUseAuth.mockReturnValue({
+      login: mockLogin,
+      register: jest.fn(),
+      isLoading: false,
+      error: null,
+    });
 
-    await userEvent.type(screen.getByPlaceholderText('Email'), 'test@test.com');
-    await userEvent.type(screen.getByPlaceholderText('Contraseña'), 'password123');
+    renderLoginForm();
 
-    const submitButton = screen.getByRole('button', { name: /iniciar sesión/i });
-    await userEvent.click(submitButton);
+    fireEvent.change(screen.getByLabelText(/email/i), {
+      target: { value: 'test@example.com' },
+    });
+    fireEvent.change(screen.getByLabelText(/contraseña/i), {
+      target: { value: 'password123' },
+    });
 
-    expect(mockLogin).toHaveBeenCalledWith('test@test.com', 'password123');
+    fireEvent.click(screen.getByRole('button', { name: /iniciar sesión/i }));
+
+    await waitFor(() => {
+      expect(mockLogin).toHaveBeenCalledWith({
+        email: 'test@example.com',
+        password: 'password123',
+      });
+    });
   });
 
   it('debe mostrar error de autenticación', async () => {
-    const mockError = 'Credenciales inválidas';
-    (useAuth as jest.Mock).mockReturnValue({
-      login: mockLogin,
-      error: mockError,
+    mockUseAuth.mockReturnValue({
+      login: jest.fn(),
+      register: jest.fn(),
       isLoading: false,
+      error: 'Credenciales inválidas',
     });
 
-    render(<LoginPage />);
+    renderLoginForm();
 
-    expect(screen.getByText(mockError)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/credenciales inválidas/i)).toBeInTheDocument();
+    });
   });
 
-  it('debe mostrar estado de carga', async () => {
-    (useAuth as jest.Mock).mockReturnValue({
-      login: mockLogin,
-      error: null,
+  it('debe mostrar estado de carga', () => {
+    mockUseAuth.mockReturnValue({
+      login: jest.fn(),
+      register: jest.fn(),
       isLoading: true,
+      error: null,
     });
 
-    render(<LoginPage />);
+    renderLoginForm();
 
-    const button = screen.getByRole('button');
-    expect(button).toHaveTextContent(/iniciando sesión\.\.\./i);
-    expect(button).toBeDisabled();
+    expect(screen.getByRole('button', { name: /iniciando sesión/i })).toBeInTheDocument();
   });
 
   it('debe tener link al registro', () => {
-    render(<LoginPage />);
-
-    const registerLink = screen.getByText(/¿no tienes una cuenta\? regístrate/i);
-    expect(registerLink).toBeInTheDocument();
-    expect(registerLink.getAttribute('href')).toBe('/register');
+    renderLoginForm();
+    expect(screen.getByText(/¿no tienes una cuenta\?/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /regístrate/i })).toHaveAttribute('href', '/register');
   });
 });

@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetSuggestedUsersQuery, useFollowUserMutation } from '@/store/services/userApi';
+import { useGetSuggestedUsersQuery, useFollowUserMutation } from '@/shared/store/services/userApi';
 import Image from 'next/image';
 import { useEffect } from 'react';
 

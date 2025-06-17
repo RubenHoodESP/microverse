@@ -4,17 +4,23 @@ import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from '@/shared/components/atoms/Button';
 import { Input } from '@/shared/components/atoms/Input';
+import { LoginCredentials } from '../types';
 
 export const LoginForm = () => {
   const { login, isLoading, error } = useAuth();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<LoginCredentials>({
     email: '',
     password: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login(formData);
+    try {
+      await login(formData);
+    } catch (error) {
+      // El error ya se maneja en el hook useAuth
+      console.error('Error en el formulario:', error);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,7 +62,11 @@ export const LoginForm = () => {
 
       {error && (
         <p className="text-sm text-destructive" role="alert">
-          {error}
+          {typeof error === 'string'
+            ? error
+            : 'status' in error
+              ? (error.data as any)?.message || `Error: ${error.status}`
+              : (error as any)?.message || 'Error desconocido'}
         </p>
       )}
 

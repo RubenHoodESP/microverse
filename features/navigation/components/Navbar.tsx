@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Compass, User, Settings } from 'lucide-react';
 import { useTheme } from '@/shared/theme/useTheme';
-import { useGetCurrentUserQuery } from '@/store/services/userApi';
+import { useGetCurrentUserQuery } from '@/shared/store/services/userApi';
 
 type NavItem = {
   href?: string;

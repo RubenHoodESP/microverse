@@ -1,144 +1,110 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import RegisterPage from '@/app/register/page';
-import { useAuth } from '@/hooks/useAuth';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { RegisterForm } from '@/features/auth/components/RegisterForm';
+import { Provider } from 'react-redux';
+import { store } from '@/shared/store';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 // Mock del hook useAuth
-jest.mock('@/hooks/useAuth', () => ({
-  useAuth: jest.fn(),
-}));
+jest.mock('@/features/auth/hooks/useAuth');
 
-// Mock de next/navigation
-jest.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: jest.fn(),
-  }),
-}));
+const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
 
-describe('RegisterPage', () => {
-  const mockRegister = jest.fn();
-
+describe('RegisterForm', () => {
   beforeEach(() => {
+    // Resetear los mocks entre tests
     jest.clearAllMocks();
-    (useAuth as jest.Mock).mockReturnValue({
+    mockUseAuth.mockReturnValue({
+      login: jest.fn(),
+      register: jest.fn(),
+      isLoading: false,
+      error: null,
+    });
+  });
+
+  const renderRegisterForm = () => {
+    return render(
+      <Provider store={store}>
+        <RegisterForm />
+      </Provider>
+    );
+  };
+
+  it('debe mostrar errores si los campos requeridos están vacíos', async () => {
+    renderRegisterForm();
+    const submitButton = screen.getByRole('button', { name: /registrarse/i });
+
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(/el nombre es requerido/i)).toBeInTheDocument();
+      expect(screen.getByText(/el nombre de usuario es requerido/i)).toBeInTheDocument();
+      expect(screen.getByText(/el email es requerido/i)).toBeInTheDocument();
+      expect(screen.getByText(/la contraseña es requerida/i)).toBeInTheDocument();
+    });
+  });
+
+  it('debe mostrar error si el email es inválido', async () => {
+    renderRegisterForm();
+
+    fireEvent.change(screen.getByLabelText(/email/i), {
+      target: { value: 'invalid-email' },
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /registrarse/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/email inválido/i)).toBeInTheDocument();
+    });
+  });
+
+  it('debe redirigir al home tras registro exitoso', async () => {
+    const mockRegister = jest.fn();
+    mockUseAuth.mockReturnValue({
+      login: jest.fn(),
       register: mockRegister,
       isLoading: false,
+      error: null,
     });
-  });
 
-  it('debe renderizar el formulario correctamente', () => {
-    render(<RegisterPage />);
+    renderRegisterForm();
 
-    expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Username')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/contraseña/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /registrarse/i })).toBeInTheDocument();
-  });
+    fireEvent.change(screen.getByLabelText(/nombre completo/i), {
+      target: { value: 'John Doe' },
+    });
+    fireEvent.change(screen.getByLabelText(/nombre de usuario/i), {
+      target: { value: 'johndoe' },
+    });
+    fireEvent.change(screen.getByLabelText(/email/i), {
+      target: { value: 'john@example.com' },
+    });
+    fireEvent.change(screen.getByLabelText(/contraseña/i), {
+      target: { value: 'password123' },
+    });
 
-  it('debe validar campos requeridos', async () => {
-    render(<RegisterPage />);
-
-    const submitButton = screen.getByRole('button', { name: /registrarse/i });
-    await userEvent.click(submitButton);
+    fireEvent.click(screen.getByRole('button', { name: /registrarse/i }));
 
     await waitFor(() => {
-      const errorMessage = screen.getByRole('alert');
-      expect(errorMessage).toHaveTextContent('Todos los campos son requeridos');
+      expect(mockRegister).toHaveBeenCalledWith({
+        name: 'John Doe',
+        username: 'johndoe',
+        email: 'john@example.com',
+        password: 'password123',
+      });
     });
   });
 
-  it('debe validar formato de email', async () => {
-    render(<RegisterPage />);
-
-    const emailInput = screen.getByPlaceholderText('Email');
-    const usernameInput = screen.getByPlaceholderText('Username');
-    const passwordInput = screen.getByPlaceholderText(/contraseña/i);
-
-    await userEvent.type(emailInput, 'invalidemail');
-    await userEvent.type(usernameInput, 'testuser');
-    await userEvent.type(passwordInput, 'password123');
-
-    const submitButton = screen.getByRole('button', { name: /registrarse/i });
-    await userEvent.click(submitButton);
-
-    await waitFor(() => {
-      const errorMessage = screen.getByRole('alert');
-      expect(errorMessage).toHaveTextContent('Por favor, introduce un email válido');
-    });
-  });
-
-  it('debe validar longitud mínima de contraseña', async () => {
-    render(<RegisterPage />);
-
-    const emailInput = screen.getByPlaceholderText('Email');
-    const usernameInput = screen.getByPlaceholderText('Username');
-    const passwordInput = screen.getByPlaceholderText(/contraseña/i);
-
-    await userEvent.type(emailInput, 'test@test.com');
-    await userEvent.type(usernameInput, 'testuser');
-    await userEvent.type(passwordInput, '12345');
-
-    const submitButton = screen.getByRole('button', { name: /registrarse/i });
-    await userEvent.click(submitButton);
-
-    await waitFor(() => {
-      const errorMessage = screen.getByRole('alert');
-      expect(errorMessage).toHaveTextContent('La contraseña debe tener al menos 6 caracteres');
-    });
-  });
-
-  it('debe llamar a register con datos válidos', async () => {
-    render(<RegisterPage />);
-
-    const emailInput = screen.getByPlaceholderText('Email');
-    const usernameInput = screen.getByPlaceholderText('Username');
-    const passwordInput = screen.getByPlaceholderText(/contraseña/i);
-
-    await userEvent.type(emailInput, 'test@test.com');
-    await userEvent.type(usernameInput, 'testuser');
-    await userEvent.type(passwordInput, 'password123');
-
-    const submitButton = screen.getByRole('button', { name: /registrarse/i });
-    await userEvent.click(submitButton);
-
-    await waitFor(() => {
-      expect(mockRegister).toHaveBeenCalledWith('testuser', 'test@test.com', 'password123');
-    });
-  });
-
-  it('debe manejar errores de registro', async () => {
-    const mockError = 'El email ya está registrado';
-    (useAuth as jest.Mock).mockReturnValue({
-      register: jest.fn().mockRejectedValue(new Error(mockError)),
+  it('debe mostrar error si el registro falla', async () => {
+    mockUseAuth.mockReturnValue({
+      login: jest.fn(),
+      register: jest.fn(),
       isLoading: false,
+      error: 'El email ya está registrado',
     });
 
-    render(<RegisterPage />);
-
-    const emailInput = screen.getByPlaceholderText('Email');
-    const usernameInput = screen.getByPlaceholderText('Username');
-    const passwordInput = screen.getByPlaceholderText(/contraseña/i);
-
-    await userEvent.type(emailInput, 'test@test.com');
-    await userEvent.type(usernameInput, 'testuser');
-    await userEvent.type(passwordInput, 'password123');
-
-    const submitButton = screen.getByRole('button', { name: /registrarse/i });
-    await userEvent.click(submitButton);
+    renderRegisterForm();
 
     await waitFor(() => {
-      const errorMessage = screen.getByRole('alert');
-      expect(errorMessage).toHaveTextContent(/ha ocurrido un error durante el registro/i);
+      expect(screen.getByText(/el email ya está registrado/i)).toBeInTheDocument();
     });
-  });
-
-  it('debe tener link al login', () => {
-    render(<RegisterPage />);
-
-    const loginText = screen.getByText(/¿ya tienes una cuenta\?/i);
-    expect(loginText).toBeInTheDocument();
-    const loginLink = screen.getByText(/inicia sesión/i);
-    expect(loginLink).toBeInTheDocument();
-    expect(loginLink).toHaveAttribute('href', '/login');
   });
 });

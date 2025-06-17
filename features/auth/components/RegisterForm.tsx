@@ -88,7 +88,11 @@ export const RegisterForm = () => {
 
       {error && (
         <p className="text-sm text-destructive" role="alert">
-          {error}
+          {typeof error === 'string'
+            ? error
+            : 'status' in error
+              ? (error.data as any)?.message || `Error: ${error.status}`
+              : (error as any)?.message || 'Error desconocido'}
         </p>
       )}
 

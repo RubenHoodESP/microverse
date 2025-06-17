@@ -8,28 +8,159 @@ name: project-structure.mdc
 description: Guía de estructura del proyecto Next.js 15
 globs: **/*.{ts,tsx}
 
-## Estructura de Directorios
-- `/app`: Páginas y rutas de la aplicación
-- `/components`: Componentes reutilizables
-  - `/atoms`: Componentes básicos (botones, inputs, etc.)
-  - `/molecules`: Componentes compuestos
-  - `/organisms`: Componentes complejos
-  - `/templates`: Plantillas de página
-- `/features`: Funcionalidades específicas
-  - `/auth`: Autenticación
-  - `/posts`: Gestión de posts
-  - `/profile`: Perfiles de usuario
-- `/shared`: Utilidades compartidas
-  - `/hooks`: Custom hooks
-  - `/utils`: Funciones utilitarias
-  - `/types`: Tipos TypeScript
-- `/store`: Estado global (Redux/RTK)
-- `/styles`: Estilos globales
-- `/lib`: Configuraciones y adaptadores
-- `/public`: Archivos estáticos
+## Estructura Principal
+
+El proyecto sigue una arquitectura orientada a features, optimizada para Next.js 15 con App Router. La estructura principal se organiza de la siguiente manera:
+
+```
+/
+├── app/                    # Next.js App Router
+│   ├── (auth)/            # Grupo de rutas de autenticación
+│   ├── (dashboard)/       # Grupo de rutas del dashboard
+│   ├── (feed)/           # Grupo de rutas del feed
+│   ├── api/              # API routes
+│   └── layout.tsx        # Layout principal
+├── components/           # Componentes compartidos
+│   ├── ui/              # Componentes de UI reutilizables
+│   └── shared/          # Componentes compartidos entre features
+├── features/            # Módulos de características
+│   ├── auth/           # Feature de autenticación
+│   ├── dashboard/      # Feature del dashboard
+│   ├── feed/          # Feature del feed
+│   └── shared/        # Características compartidas
+├── lib/                # Utilidades y configuraciones
+│   ├── api/           # Configuración de API
+│   ├── auth/          # Configuración de autenticación
+│   └── utils/         # Utilidades generales
+└── types/             # Tipos globales
+```
+
+## Estructura de Features
+
+Cada feature debe seguir esta estructura interna:
+
+```
+features/
+└── [feature-name]/
+    ├── components/     # Componentes específicos de la feature
+    ├── hooks/         # Hooks específicos de la feature
+    ├── services/      # Servicios de la feature
+    ├── types/         # Tipos específicos de la feature
+    └── utils/         # Utilidades específicas de la feature
+```
 
 ## Convenciones de Nombrado
-- Componentes: PascalCase (ej: UserProfile.tsx)
-- Hooks: camelCase con prefijo 'use' (ej: useAuth.ts)
-- Utilidades: camelCase (ej: formatDate.ts)
-- Tipos: PascalCase con sufijo 'Type' (ej: UserType.ts)
+
+- **Componentes**: PascalCase (ej: `LoginForm.tsx`)
+- **Hooks**: camelCase con prefijo 'use' (ej: `useAuth.ts`)
+- **Servicios**: camelCase con sufijo 'Service' (ej: `authService.ts`)
+- **Utilidades**: camelCase con sufijo 'Utils' (ej: `authUtils.ts`)
+- **Rutas**: kebab-case (ej: `user-profile/page.tsx`)
+
+## Path Aliases
+
+El proyecto utiliza los siguientes path aliases para importaciones:
+
+```typescript
+import { Button } from '@/components/ui/Button';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import { authService } from '@/features/auth/services/authService';
+```
+
+## Buenas Prácticas
+
+### Componentes
+
+1. **Server vs Client Components**:
+   - Usar Server Components por defecto
+   - Marcar como 'use client' solo cuando sea necesario
+   - Ejemplo: [app/layout.tsx](mdc:app/layout.tsx)
+
+2. **Organización de Componentes**:
+   - Componentes UI reutilizables en `components/ui/`
+   - Componentes específicos de features en sus respectivas carpetas
+   - Componentes compartidos en `components/shared/`
+
+### Estado y Lógica
+
+1. **Hooks**:
+   - Mantener hooks específicos de features en sus respectivas carpetas
+   - Hooks globales en `hooks/`
+   - Ejemplo: [hooks/useAuth.ts](mdc:hooks/useAuth.ts)
+
+2. **Servicios**:
+   - Lógica de negocio en servicios de cada feature
+   - Servicios globales en `lib/services/`
+   - Implementar interfaces para servicios
+
+### Testing
+
+1. **Estructura de Tests**:
+   - Tests unitarios junto a los componentes
+   - Tests de integración en `__tests__/`
+   - Tests E2E en `cypress/`
+
+2. **Nomenclatura de Tests**:
+   - `[component].test.tsx` para tests unitarios
+   - `[feature].spec.ts` para tests de integración
+   - `[feature].cy.ts` para tests E2E
+
+### Documentación
+
+1. **README por Feature**:
+   - Documentar propósito y uso
+   - Listar dependencias
+   - Incluir ejemplos de uso
+
+2. **Comentarios de Código**:
+   - Documentar funciones complejas
+   - Explicar lógica de negocio
+   - Mantener documentación actualizada
+
+## Middleware y Rutas
+
+1. **Middleware**:
+   - Configuración en [middleware.ts](mdc:middleware.ts)
+   - Protección de rutas
+   - Manejo de autenticación
+
+2. **Grupos de Rutas**:
+   - Usar paréntesis para agrupar rutas relacionadas
+   - Compartir layouts entre rutas del mismo grupo
+   - Implementar layouts específicos por grupo
+
+## Configuración
+
+1. **TypeScript**:
+   - Configuración en [tsconfig.json](mdc:tsconfig.json)
+   - Path aliases definidos
+   - Tipos estrictos habilitados
+
+2. **ESLint y Prettier**:
+   - Configuración en [.eslintrc.json](mdc:.eslintrc.json)
+   - Reglas de estilo definidas
+   - Formato consistente
+
+## Consideraciones de Performance
+
+1. **Optimización**:
+   - Usar Server Components cuando sea posible
+   - Implementar lazy loading
+   - Optimizar imágenes con next/image
+
+2. **Caching**:
+   - Implementar estrategias de cache
+   - Usar revalidation cuando sea necesario
+   - Optimizar fetch requests
+
+## Seguridad
+
+1. **Autenticación**:
+   - Implementar middleware de autenticación
+   - Validar tokens
+   - Proteger rutas sensibles
+
+2. **Variables de Entorno**:
+   - Usar .env para configuraciones sensibles
+   - Validar variables de entorno
+   - No exponer secretos

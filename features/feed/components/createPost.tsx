@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useCreatePostMutation } from '@/store/services/feedApi';
+import { useCreatePostMutation } from '@/shared/store/services/feedApi';
 import { useDispatch } from 'react-redux';
-import { addPost } from '@/store/slices/postsSlice';
+import { addPost } from '@/shared/store/slices/postsSlice';
 import { Post } from '@/entities/post/Post';
 import { useSession } from 'next-auth/react';
 
