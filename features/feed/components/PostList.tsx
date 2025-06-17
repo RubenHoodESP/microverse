@@ -1,27 +1,54 @@
+'use client';
+
+import { memo, useEffect } from 'react';
 import { useGetPostsQuery } from '../services/feedApi';
-import PostCard from '@/features/posts/components/PostCard';
-import PostSkeleton from '@/features/posts/components/PostSkeleton';
 import { FeedType } from './FeedContainer';
+import PostCard from '@/features/posts/components/PostCard';
 
-type PostListProps = {
-  type: FeedType;
-};
+const POLLING_INTERVAL = 30000; // 30 segundos
 
-export default function PostList({ type }: PostListProps) {
-  const { data: posts, isLoading, error } = useGetPostsQuery({ type });
+const PostList = memo(function PostList({ type }: { type: FeedType }) {
+  const {
+    data: posts,
+    isLoading,
+    error,
+    refetch,
+  } = useGetPostsQuery(type, {
+    pollingInterval: POLLING_INTERVAL,
+    refetchOnMountOrArgChange: true,
+  });
+
+  // Efecto para manejar el polling cuando el componente está visible
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      refetch();
+    }, POLLING_INTERVAL);
+
+    return () => clearInterval(intervalId);
+  }, [refetch]);
 
   if (isLoading) {
     return (
       <div className="flex flex-col gap-4">
-        <PostSkeleton />
-        <PostSkeleton />
-        <PostSkeleton />
+        <div className="animate-pulse bg-gray-200 h-32 rounded-lg"></div>
+        <div className="animate-pulse bg-gray-200 h-32 rounded-lg"></div>
       </div>
     );
   }
 
-  if (error) return <p className="text-red-500">Error al cargar los posts.</p>;
-  if (!posts?.length) return <p>No hay publicaciones aún.</p>;
+  if (error) {
+    return <div className="text-center text-red-500">Error al cargar las publicaciones</div>;
+  }
+
+  if (!posts?.length) {
+    return (
+      <div className="text-center text-gray-500">
+        {type === 'following'
+          ? 'No sigues a nadie aún. ¡Prueba a seguir a gente!'
+          : 'No hay publicaciones aún'}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -30,4 +57,6 @@ export default function PostList({ type }: PostListProps) {
       ))}
     </div>
   );
-}
+});
+
+export default PostList;

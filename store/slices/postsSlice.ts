@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Post } from '@/entities/post/Post';
 
-
 interface PostsState {
   posts: Post[];
   loading: boolean;
@@ -18,11 +17,11 @@ const postsSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {
-    setPosts: (state, action: PayloadAction<Post[]>) => {
-      state.posts = action.payload;
-    },
     addPost: (state, action: PayloadAction<Post>) => {
       state.posts.unshift(action.payload);
+    },
+    setPosts: (state, action: PayloadAction<Post[]>) => {
+      state.posts = action.payload;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
@@ -33,5 +32,5 @@ const postsSlice = createSlice({
   },
 });
 
-export const { setPosts, addPost, setLoading, setError } = postsSlice.actions;
-export default postsSlice.reducer; 
+export const { addPost, setPosts, setLoading, setError } = postsSlice.actions;
+export default postsSlice.reducer;

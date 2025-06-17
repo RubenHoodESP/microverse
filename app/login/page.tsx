@@ -9,22 +9,16 @@ export default function LoginPage() {
     email: '',
     password: '',
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const { login, error: authError } = useAuth();
+  const { login, error: authError, isLoading } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
 
     try {
-      const success = await login(formData.email, formData.password);
-      if (!success) {
-        setIsLoading(false);
-      }
+      await login(formData.email, formData.password);
     } catch (error) {
-      setIsLoading(false);
+      // El error se maneja en el hook useAuth
     }
-    setIsLoading(false);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,7 +32,9 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">Iniciar sesión</h2>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
+            Iniciar sesión
+          </h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {authError && (

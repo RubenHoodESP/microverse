@@ -20,27 +20,27 @@ export default function RegisterPage() {
     e.preventDefault();
     setError('');
 
+    // Validación básica
+    if (!formData.email || !formData.username || !formData.password) {
+      setError('Todos los campos son requeridos');
+      return;
+    }
+
+    // Validación de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Por favor, introduce un email válido');
+      return;
+    }
+
+    // Validación de contraseña
+    if (formData.password.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
     try {
-      // Validación básica
-      if (!formData.email || !formData.username || !formData.password) {
-        setError('Todos los campos son requeridos');
-        return;
-      }
-
-      // Validación de email
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.email)) {
-        setError('Por favor, introduce un email válido');
-        return;
-      }
-
-      // Validación de contraseña
-      if (formData.password.length < 6) {
-        setError('La contraseña debe tener al menos 6 caracteres');
-        return;
-      }
-
-      await register(formData.name, formData.email, formData.password);
+      await register(formData.username, formData.email, formData.password);
       router.push('/');
     } catch (err) {
       console.error('Error en el registro:', err);
@@ -71,7 +71,11 @@ export default function RegisterPage() {
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
+            <div
+              className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded relative"
+              role="alert"
+              aria-live="polite"
+            >
               {error}
             </div>
           )}

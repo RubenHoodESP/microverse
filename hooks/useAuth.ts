@@ -21,14 +21,15 @@ export function useAuth() {
 
       if (result?.error) {
         setError(result.error);
-        return;
+        return false;
       }
 
-      // Redirigir a la página principal después del login exitoso
       router.push('/');
       router.refresh();
+      return true;
     } catch (err) {
       setError('Error al iniciar sesión');
+      return false;
     } finally {
       setIsLoading(false);
     }
@@ -50,8 +51,11 @@ export function useAuth() {
       if (!response.ok) {
         throw new Error(data.message || 'Error al registrar usuario');
       }
+
+      return true;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al registrar usuario');
+      return false;
     } finally {
       setIsLoading(false);
     }

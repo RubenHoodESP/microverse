@@ -1,44 +1,43 @@
-import { Post } from '@/entities/post/Post';
+'use client';
+
+import { Avatar } from '@/features/shared/components/Avatar';
+import { Post } from '@/features/feed/services/feedApi';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 
-type PostCardProps = {
+interface PostCardProps {
   post: Post;
-};
+}
 
 export default function PostCard({ post }: PostCardProps) {
   return (
-    <article className="bg-background border border-foreground rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
-      <header className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
-          {post.author?.avatarUrl ? (
-            <img
-              src={post.author.avatarUrl}
-              alt={post.author.name}
-              className="w-10 h-10 rounded-full object-cover"
-            />
-          ) : (
-            <div className="w-10 h-10 bg-gray-300 rounded-full" />
-          )}
-          <div>
-            <p className="font-semibold">{post.author?.name || 'Usuario Anónimo'}</p>
-            <p className="text-sm text-foreground-secondary">
-              @{post.author?.username || 'anonimo'}
-            </p>
+    <article className="bg-background border border-foreground rounded-lg shadow p-4">
+      <div className="flex items-start gap-3">
+        <Avatar src={post.author.image} name={post.author.name} size="md" />
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold">{post.author.name}</h3>
+            <span className="text-gray-500 text-sm">
+              {formatDistanceToNow(new Date(post.createdAt), {
+                addSuffix: true,
+                locale: es,
+              })}
+            </span>
+          </div>
+          <h2 className="text-xl font-bold mt-1">{post.title}</h2>
+          <p className="mt-2 text-gray-700">{post.content}</p>
+          <div className="flex items-center gap-4 mt-4 text-gray-500">
+            <button className="flex items-center gap-1 hover:text-blue-500">
+              <span>❤️</span>
+              <span>{post.likes}</span>
+            </button>
+            <button className="flex items-center gap-1 hover:text-blue-500">
+              <span>💬</span>
+              <span>{post.comments}</span>
+            </button>
           </div>
         </div>
-        {post.createdAt && (
-          <span className="text-xs text-foreground-secondary">
-            {formatDistanceToNow(new Date(post.createdAt), {
-              addSuffix: true,
-              locale: es,
-            })}
-          </span>
-        )}
-      </header>
-
-      <h2 className="text-lg font-medium mb-1">{post.title}</h2>
-      <p className="text-foreground-secondary">{post.content}</p>
+      </div>
     </article>
   );
 }

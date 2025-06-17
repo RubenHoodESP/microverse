@@ -1,8 +1,7 @@
-import NextAuth, { DefaultSession } from "next-auth";
+import NextAuth, { DefaultSession, NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaClient } from "@prisma/client";
-import { AuthService } from "@/src/core/application/auth/AuthService";
-import { PrismaUserRepository } from "@/src/infrastructure/persistence/PrismaUserRepository";
+import { compare } from "bcryptjs";
 
 // Extender el tipo de sesión para incluir el id
 declare module "next-auth" {
@@ -14,10 +13,8 @@ declare module "next-auth" {
 }
 
 const prisma = new PrismaClient();
-const userRepository = new PrismaUserRepository(prisma);
-const authService = new AuthService(userRepository, process.env.NEXTAUTH_SECRET || '');
 
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -27,24 +24,28 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null;
+          throw new Error('Email y contraseña son requeridos');
         }
 
-        try {
-          const { user } = await authService.login({
-            email: credentials.email,
-            password: credentials.password
-          });
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email }
+        });
 
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            image: user.image
-          };
-        } catch (error) {
-          return null;
+        if (!user) {
+          throw new Error('Usuario no encontrado');
         }
+
+        const isValid = await compare(credentials.password, user.password);
+        if (!isValid) {
+          throw new Error('Credenciales inválidas');
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          image: user.image
+        };
       }
     })
   ],
@@ -71,6 +72,8 @@ const handler = NextAuth({
     }
   },
   secret: process.env.NEXTAUTH_SECRET
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
