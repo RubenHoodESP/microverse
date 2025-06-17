@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import RegisterPage from '@/app/register/page';
 import { useAuth } from '@/hooks/useAuth';
@@ -41,49 +41,69 @@ describe('RegisterPage', () => {
     const submitButton = screen.getByRole('button', { name: /registrarse/i });
     await userEvent.click(submitButton);
 
-    const errorMessage = await screen.findByRole('alert');
-    expect(errorMessage).toHaveTextContent('Todos los campos son requeridos');
+    await waitFor(() => {
+      const errorMessage = screen.getByRole('alert');
+      expect(errorMessage).toHaveTextContent('Todos los campos son requeridos');
+    });
   });
 
   it('debe validar formato de email', async () => {
     render(<RegisterPage />);
 
-    await userEvent.type(screen.getByPlaceholderText('Email'), 'invalidemail');
-    await userEvent.type(screen.getByPlaceholderText('Username'), 'testuser');
-    await userEvent.type(screen.getByPlaceholderText(/contraseña/i), 'password123');
+    const emailInput = screen.getByPlaceholderText('Email');
+    const usernameInput = screen.getByPlaceholderText('Username');
+    const passwordInput = screen.getByPlaceholderText(/contraseña/i);
+
+    await userEvent.type(emailInput, 'invalidemail');
+    await userEvent.type(usernameInput, 'testuser');
+    await userEvent.type(passwordInput, 'password123');
 
     const submitButton = screen.getByRole('button', { name: /registrarse/i });
     await userEvent.click(submitButton);
 
-    const errorMessage = await screen.findByRole('alert');
-    expect(errorMessage).toHaveTextContent('Por favor, introduce un email válido');
+    await waitFor(() => {
+      const errorMessage = screen.getByRole('alert');
+      expect(errorMessage).toHaveTextContent('Por favor, introduce un email válido');
+    });
   });
 
   it('debe validar longitud mínima de contraseña', async () => {
     render(<RegisterPage />);
 
-    await userEvent.type(screen.getByPlaceholderText('Email'), 'test@test.com');
-    await userEvent.type(screen.getByPlaceholderText('Username'), 'testuser');
-    await userEvent.type(screen.getByPlaceholderText(/contraseña/i), '12345');
+    const emailInput = screen.getByPlaceholderText('Email');
+    const usernameInput = screen.getByPlaceholderText('Username');
+    const passwordInput = screen.getByPlaceholderText(/contraseña/i);
+
+    await userEvent.type(emailInput, 'test@test.com');
+    await userEvent.type(usernameInput, 'testuser');
+    await userEvent.type(passwordInput, '12345');
 
     const submitButton = screen.getByRole('button', { name: /registrarse/i });
     await userEvent.click(submitButton);
 
-    const errorMessage = await screen.findByRole('alert');
-    expect(errorMessage).toHaveTextContent('La contraseña debe tener al menos 6 caracteres');
+    await waitFor(() => {
+      const errorMessage = screen.getByRole('alert');
+      expect(errorMessage).toHaveTextContent('La contraseña debe tener al menos 6 caracteres');
+    });
   });
 
   it('debe llamar a register con datos válidos', async () => {
     render(<RegisterPage />);
 
-    await userEvent.type(screen.getByPlaceholderText('Email'), 'test@test.com');
-    await userEvent.type(screen.getByPlaceholderText('Username'), 'testuser');
-    await userEvent.type(screen.getByPlaceholderText(/contraseña/i), 'password123');
+    const emailInput = screen.getByPlaceholderText('Email');
+    const usernameInput = screen.getByPlaceholderText('Username');
+    const passwordInput = screen.getByPlaceholderText(/contraseña/i);
+
+    await userEvent.type(emailInput, 'test@test.com');
+    await userEvent.type(usernameInput, 'testuser');
+    await userEvent.type(passwordInput, 'password123');
 
     const submitButton = screen.getByRole('button', { name: /registrarse/i });
     await userEvent.click(submitButton);
 
-    expect(mockRegister).toHaveBeenCalledWith('testuser', 'test@test.com', 'password123');
+    await waitFor(() => {
+      expect(mockRegister).toHaveBeenCalledWith('testuser', 'test@test.com', 'password123');
+    });
   });
 
   it('debe manejar errores de registro', async () => {
@@ -95,15 +115,21 @@ describe('RegisterPage', () => {
 
     render(<RegisterPage />);
 
-    await userEvent.type(screen.getByPlaceholderText('Email'), 'test@test.com');
-    await userEvent.type(screen.getByPlaceholderText('Username'), 'testuser');
-    await userEvent.type(screen.getByPlaceholderText(/contraseña/i), 'password123');
+    const emailInput = screen.getByPlaceholderText('Email');
+    const usernameInput = screen.getByPlaceholderText('Username');
+    const passwordInput = screen.getByPlaceholderText(/contraseña/i);
+
+    await userEvent.type(emailInput, 'test@test.com');
+    await userEvent.type(usernameInput, 'testuser');
+    await userEvent.type(passwordInput, 'password123');
 
     const submitButton = screen.getByRole('button', { name: /registrarse/i });
     await userEvent.click(submitButton);
 
-    const errorMessage = await screen.findByRole('alert');
-    expect(errorMessage).toHaveTextContent(/ha ocurrido un error durante el registro/i);
+    await waitFor(() => {
+      const errorMessage = screen.getByRole('alert');
+      expect(errorMessage).toHaveTextContent(/ha ocurrido un error durante el registro/i);
+    });
   });
 
   it('debe tener link al login', () => {
