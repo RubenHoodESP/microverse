@@ -1,10 +1,8 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Post } from '@/entities/post/Post';
 import { mockPosts } from '@/shared/mocks/mockPosts';
+import { api } from '@/shared/store/services/api';
 
-export const postsApi = createApi({
-  reducerPath: 'postsApi',
-  baseQuery: fetchBaseQuery({ baseUrl: '/api/' }),
+export const postsApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getPosts: builder.query<Post[], void>({
       query: () => 'posts',
@@ -16,7 +14,10 @@ export const postsApi = createApi({
         return response;
       },
     }),
+    getUserPosts: builder.query<Post[], string>({
+      query: (userId) => `posts?userId=${userId}`,
+    }),
   }),
 });
 
-export const { useGetPostsQuery } = postsApi;
+export const { useGetPostsQuery, useGetUserPostsQuery } = postsApi;

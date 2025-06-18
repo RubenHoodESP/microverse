@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Compass, User, Settings } from 'lucide-react';
 import { useTheme } from '@/shared/theme/useTheme';
-import { useGetCurrentUserQuery } from '@/shared/store/services/userApi';
+import { useSession } from 'next-auth/react';
 
 type NavItem = {
   href?: string;
@@ -16,7 +16,8 @@ type NavItem = {
 export default function Navbar() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
-  const { data: currentUser } = useGetCurrentUserQuery();
+  const { data: session } = useSession();
+  const currentUser = session?.user;
 
   const navItems: NavItem[] = [
     {

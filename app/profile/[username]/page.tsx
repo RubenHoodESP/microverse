@@ -1,11 +1,11 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import ProfileLayout from '@/components/profile/ProfileLayout';
-import ProfileHeader from '@/components/profile/ProfileHeader';
-import ProfileContent from '@/components/profile/ProfileContent';
+import ProfileLayout from '@/features/user/components/ProfileLayout';
+import ProfileHeader from '@/features/user/components/ProfileHeader';
+import ProfileContent from '@/features/user/components/ProfileContent';
 import { getUserProfile } from '@/lib/api/users';
 import { Suspense } from 'react';
-import LoadingProfile from '@/components/profile/LoadingProfile';
+import LoadingProfile from '@/features/user/components/LoadingProfile';
 
 interface ProfilePageProps {
   params: {
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: ProfilePageProps): Promise<Me
       openGraph: {
         title: `${user.name} | Microverse Profile`,
         description: user.bio || `View ${user.name}'s profile on Microverse`,
-        images: [user.avatarUrl || '/default-avatar.png'],
+        images: [user.avatar || '/default-avatar.png'],
       },
     };
   } catch (error) {

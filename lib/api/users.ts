@@ -1,21 +1,7 @@
 import { prisma } from '@/lib/prisma';
-import { getServerSession } from 'next-auth';
+import { getServerSession, User } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  username: string;
-  image?: string;
-  bio?: string;
-  location?: string;
-  website?: string;
-  createdAt: string;
-  isFollowing?: boolean;
-  followersCount?: number;
-  followingCount?: number;
-}
 
 export async function getUserProfile(username: string): Promise<User> {
   const user = await prisma.user.findUnique({
@@ -23,8 +9,6 @@ export async function getUserProfile(username: string): Promise<User> {
     include: {
       followers: true,
       following: true,
-      skills: true,
-      projects: true,
     },
   });
 

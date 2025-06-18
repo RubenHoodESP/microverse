@@ -41,19 +41,32 @@ export default function SuggestedUsers() {
 
   if (isLoading) {
     console.log('Renderizando estado de carga...');
-    return <p className="text-sm text-gray-500">Cargando sugerencias...</p>;
+    return (
+      <aside>
+        <h2 className="text-lg font-semibold mb-3">A quién seguir</h2>
+        <p className="text-sm text-gray-500">Cargando sugerencias...</p>
+      </aside>
+    );
   }
 
   if (isError) {
     console.error('Error en SuggestedUsers:', error);
     return (
-      <p className="text-sm text-red-500">Error al cargar sugerencias: {JSON.stringify(error)}</p>
+      <aside>
+        <h2 className="text-lg font-semibold mb-3">A quién seguir</h2>
+        <p className="text-sm text-red-500">Error al cargar sugerencias: {JSON.stringify(error)}</p>
+      </aside>
     );
   }
 
   if (!users?.length) {
     console.log('No hay usuarios sugeridos');
-    return null;
+    return (
+      <aside>
+        <h2 className="text-lg font-semibold mb-3">A quién seguir</h2>
+        <p className="text-sm text-gray-500">No hay usuarios sugeridos</p>
+      </aside>
+    );
   }
 
   console.log('Renderizando lista de usuarios sugeridos:', users);
@@ -66,9 +79,9 @@ export default function SuggestedUsers() {
           <li key={user.id} className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="relative w-10 h-10">
-                {user.image ? (
+                {user.avatar ? (
                   <Image
-                    src={user.image}
+                    src={user.avatar}
                     alt={user.name}
                     fill
                     className="rounded-full object-cover"

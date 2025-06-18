@@ -40,10 +40,12 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Credenciales inválidas');
         }
 
+        console.log('🔑 [authorize] Usuario encontrado:', user);
         return {
           id: user.id,
           email: user.email,
           name: user.name,
+          username: user.username,
           image: user.image
         };
       }
@@ -59,15 +61,29 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
+      console.log('🟡 [jwt] token antes:', token);
+      if (user && typeof user === 'object' && 'username' in user) {
         token.id = user.id;
+        token.username = user.username;
+        console.log('🟢 [jwt] user con username:', user);
+      } else if (user) {
+        token.id = user.id;
+        console.log('🟠 [jwt] user sin username:', user);
       }
+      console.log('🔵 [jwt] token después:', token);
       return token;
     },
     async session({ session, token }) {
+      console.log('🟡 [session] session antes:', session);
+      console.log('🟡 [session] token:', token);
       if (session.user) {
         session.user.id = token.id as string;
+        if (token.username) {
+          (session.user as any).username = token.username as string;
+          console.log('🟢 [session] username añadido a session.user:', token.username);
+        }
       }
+      console.log('🔵 [session] session después:', session);
       return session;
     }
   },
