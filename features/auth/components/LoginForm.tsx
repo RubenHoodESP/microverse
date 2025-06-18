@@ -1,25 +1,34 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
+import { signIn } from 'next-auth/react';
 import { Button } from '@/shared/components/atoms/Button';
 import { Input } from '@/shared/components/atoms/Input';
 import { LoginCredentials } from '../types';
 
 export const LoginForm = () => {
-  const { login, isLoading, error } = useAuth();
   const [formData, setFormData] = useState<LoginCredentials>({
     email: '',
     password: '',
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await login(formData);
-    } catch (error) {
-      // El error ya se maneja en el hook useAuth
-      console.error('Error en el formulario:', error);
+    setIsLoading(true);
+    setError(null);
+    const result = await signIn('credentials', {
+      redirect: false,
+      email: formData.email,
+      password: formData.password,
+    });
+    setIsLoading(false);
+
+    if (result?.error) {
+      setError(result.error);
+    } else if (result?.ok) {
+      window.location.href = '/';
     }
   };
 
@@ -62,11 +71,7 @@ export const LoginForm = () => {
 
       {error && (
         <p className="text-sm text-destructive" role="alert">
-          {typeof error === 'string'
-            ? error
-            : 'status' in error
-              ? (error.data as any)?.message || `Error: ${error.status}`
-              : (error as any)?.message || 'Error desconocido'}
+          {error}
         </p>
       )}
 

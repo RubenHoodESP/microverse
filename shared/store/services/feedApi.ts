@@ -1,9 +1,7 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { api } from './api';
 import { Post } from '@/entities/post/Post';
 
-export const feedApi = createApi({
-  reducerPath: 'feedApi',
-  baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
+export const feedApi = api.injectEndpoints({
   endpoints: (builder) => ({
     createPost: builder.mutation<Post, { content: string }>({
       query: (post) => ({

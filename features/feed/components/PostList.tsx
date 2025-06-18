@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useEffect } from 'react';
-import { useGetPostsQuery } from '../services/feedApi';
+import { useGetPostsQuery } from '@/shared/store/services/feedApi';
 import { FeedType } from './FeedContainer';
 import PostCard from '@/features/posts/components/PostCard';
 
@@ -13,7 +13,7 @@ const PostList = memo(function PostList({ type }: { type: FeedType }) {
     isLoading,
     error,
     refetch,
-  } = useGetPostsQuery(type, {
+  } = useGetPostsQuery(undefined, {
     pollingInterval: POLLING_INTERVAL,
     refetchOnMountOrArgChange: true,
   });
@@ -52,7 +52,7 @@ const PostList = memo(function PostList({ type }: { type: FeedType }) {
 
   return (
     <div className="flex flex-col gap-4">
-      {posts.map((post) => (
+      {posts.map((post: any) => (
         <PostCard key={post.id} post={post} />
       ))}
     </div>
