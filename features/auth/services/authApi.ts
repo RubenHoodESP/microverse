@@ -1,19 +1,7 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { LoginCredentials, RegisterCredentials, AuthResponse } from '../types';
+import { api } from '@/shared/store/services/api';
+import { AuthResponse, LoginCredentials, RegisterCredentials } from '../types';
 
-export const authApi = createApi({
-  reducerPath: 'authApi',
-  baseQuery: fetchBaseQuery({ 
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api',
-    prepareHeaders: (headers, { getState }) => {
-      // Obtener el token del estado de Redux
-      const token = (getState() as any).auth.token;
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+export const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation<AuthResponse, LoginCredentials>({
       query: (credentials) => ({
@@ -35,9 +23,6 @@ export const authApi = createApi({
         method: 'POST',
       }),
     }),
-    getCurrentUser: builder.query<AuthResponse, void>({
-      query: () => 'auth/me',
-    }),
   }),
 });
 
@@ -45,5 +30,4 @@ export const {
   useLoginMutation,
   useRegisterMutation,
   useLogoutMutation,
-  useGetCurrentUserQuery,
 } = authApi;

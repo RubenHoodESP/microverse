@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getToken } from 'next-auth/jwt';
 
 // Rutas que no requieren autenticación
 const publicRoutes = [
@@ -14,25 +13,28 @@ const publicRoutes = [
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  console.log('🔒 Middleware - Ruta accedida:', pathname);
 
-  // Obtener el token de sesión de NextAuth
-  const token = await getToken({ 
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET
-  });
+  // Obtener el token de las cookies
+  const token = request.cookies.get('token')?.value;
+  console.log('🔑 Middleware - Token presente:', !!token);
 
   // Si el usuario está autenticado y trata de acceder a login/register
   if (token && (pathname === '/login' || pathname === '/register')) {
+    console.log('🔄 Middleware - Usuario autenticado intentando acceder a login/register, redirigiendo a /');
     return NextResponse.redirect(new URL('/', request.url));
   }
 
   // Si el usuario no está autenticado y la ruta no es pública
   if (!token && !publicRoutes.some(route => pathname.startsWith(route))) {
+    console.log('🔒 Middleware - Usuario no autenticado intentando acceder a ruta protegida:', pathname);
     const url = new URL('/login', request.url);
     url.searchParams.set('callbackUrl', encodeURIComponent(pathname));
+    console.log('🔄 Middleware - Redirigiendo a login con callbackUrl:', url.toString());
     return NextResponse.redirect(url);
   }
 
+  console.log('✅ Middleware - Acceso permitido a:', pathname);
   return NextResponse.next();
 }
 
