@@ -1,14 +1,23 @@
 import { prisma } from '@/lib/prisma';
-import { getServerSession, User } from 'next-auth';
+import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { User } from '@/types/user';
 
 
 export async function getUserProfile(username: string): Promise<User> {
   const user = await prisma.user.findUnique({
     where: { username },
     include: {
-      followers: true,
-      following: true,
+      followers: {
+        include: {
+          following: true,
+        },
+      },
+      following: {
+        include: {
+          follower: true,
+        },
+      },
     },
   });
 
@@ -16,7 +25,65 @@ export async function getUserProfile(username: string): Promise<User> {
     throw new Error('Usuario no encontrado');
   }
 
-  return user;
+  // Transformar los datos de Prisma al tipo User personalizado
+  return {
+    id: user.id,
+    username: user.username,
+    name: user.name || user.username, // Usar username como fallback si name es null
+    email: user.email,
+    avatarUrl: user.image || undefined,
+    bio: user.bio || undefined,
+    location: undefined, // No existe en el schema actual
+    website: undefined, // No existe en el schema actual
+    githubUrl: undefined, // No existe en el schema actual
+    linkedinUrl: undefined, // No existe en el schema actual
+    twitterUrl: undefined, // No existe en el schema actual
+    projects: [], // No existe en el schema actual
+    followers: user.followers.map(follow => ({
+      id: follow.following.id,
+      username: follow.following.username,
+      name: follow.following.name || follow.following.username,
+      email: follow.following.email,
+      avatarUrl: follow.following.image || undefined,
+      bio: follow.following.bio || undefined,
+      location: undefined,
+      website: undefined,
+      githubUrl: undefined,
+      linkedinUrl: undefined,
+      twitterUrl: undefined,
+      projects: [],
+      followers: [],
+      following: [],
+      contributions: 0,
+      skills: [],
+      createdAt: follow.following.createdAt.toISOString(),
+      updatedAt: follow.following.updatedAt.toISOString(),
+    })),
+    following: user.following.map(follow => ({
+      id: follow.follower.id,
+      username: follow.follower.username,
+      name: follow.follower.name || follow.follower.username,
+      email: follow.follower.email,
+      avatarUrl: follow.follower.image || undefined,
+      bio: follow.follower.bio || undefined,
+      location: undefined,
+      website: undefined,
+      githubUrl: undefined,
+      linkedinUrl: undefined,
+      twitterUrl: undefined,
+      projects: [],
+      followers: [],
+      following: [],
+      contributions: 0,
+      skills: [],
+      createdAt: follow.follower.createdAt.toISOString(),
+      updatedAt: follow.follower.updatedAt.toISOString(),
+    })),
+    contributions: 0, // No existe en el schema actual
+    skills: [], // No existe en el schema actual
+    createdAt: user.createdAt.toISOString(),
+    updatedAt: user.updatedAt.toISOString(),
+  };
 }
 
 export async function getSuggestedUsers(): Promise<User[]> {
@@ -159,4 +226,42 @@ export async function unfollowUser(userId: string): Promise<void> {
   });
 
   console.log('✅ Relación eliminada exitosamente');
+}
+
+export async function getUserPosts(userId: string) {
+  const posts = await prisma.post.findMany({
+    where: { authorId: userId },
+    orderBy: { createdAt: 'desc' },
+    include: {
+      author: {
+        select: {
+          id: true,
+          username: true,
+          name: true,
+          image: true,
+        }
+      },
+      _count: {
+        select: {
+          likes: true,
+          comments: true,
+        }
+      }
+    }
+  });
+
+  return posts.map(post => ({
+    id: post.id,
+    title: post.title,
+    content: post.content,
+    createdAt: post.createdAt.toISOString(),
+    author: {
+      id: post.author.id,
+      username: post.author.username,
+      name: post.author.name || post.author.username,
+      avatarUrl: post.author.image || undefined,
+    },
+    likes: [], // Array vacío por ahora
+    comments: [], // Array vacío por ahora
+  }));
 } 

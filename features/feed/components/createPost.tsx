@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { addPost } from '@/shared/store/slices/postsSlice';
 import { Post } from '@/entities/post/Post';
 import { useSession } from 'next-auth/react';
+import { Textarea } from '@/shared/components/atoms/Textarea';
 
 export default function CreatePost() {
   const [postContent, setPostContent] = useState('');
@@ -34,11 +35,11 @@ export default function CreatePost() {
     <form onSubmit={handleSubmit} className="border-b border-gray-200 pb-4">
       <div className="flex gap-4">
         <div className="flex-1">
-          <textarea
+          <Textarea
             value={postContent}
             onChange={(e) => setPostContent(e.target.value)}
             placeholder="¿Qué está pasando?"
-            className="w-full p-4 text-lg resize-none focus:outline-none bg-transparent placeholder:text-gray-500"
+            className="w-full p-4 text-lg resize-none bg-transparent placeholder:text-gray-500 border-0 focus-visible:ring-0 focus-visible:border-0 shadow-none"
             rows={3}
           />
         </div>

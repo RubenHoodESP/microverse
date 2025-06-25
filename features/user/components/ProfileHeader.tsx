@@ -1,12 +1,5 @@
 import Image from 'next/image';
-
-interface User {
-  id: string;
-  name: string;
-  username: string;
-  avatar?: string;
-  bio?: string;
-}
+import { User } from '@/types/user';
 
 interface ProfileHeaderProps {
   user: User;
@@ -17,12 +10,12 @@ export default function ProfileHeader({ user, isOwner }: ProfileHeaderProps) {
   return (
     <div className="flex items-center gap-4 mb-6">
       <div className="relative w-20 h-20">
-        <Image
-          src={user.avatar || '/default-avatar.png'}
+        {/* <Image
+          src={user.avatarUrl || '/default-avatar.png'}
           alt={user.name}
           fill
           className="rounded-full object-cover"
-        />
+        /> */}
       </div>
       <div>
         <h1 className="text-2xl font-bold">{user.name}</h1>

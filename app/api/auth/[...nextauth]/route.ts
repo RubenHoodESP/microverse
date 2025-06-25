@@ -3,11 +3,12 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaClient } from "@prisma/client";
 import { compare } from "bcryptjs";
 
-// Extender el tipo de sesión para incluir el id
+// Extender el tipo de sesión para incluir el id y username
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
+      username?: string;
     } & DefaultSession["user"]
   }
 }
@@ -79,7 +80,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.id as string;
         if (token.username) {
-          (session.user as any).username = token.username as string;
+          session.user.username = token.username as string;
           console.log('🟢 [session] username añadido a session.user:', token.username);
         }
       }

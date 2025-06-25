@@ -5,68 +5,275 @@ import * as ButtonStories from './Button.stories';
 
 # Button Component
 
-El componente Button es un componente atómico que proporciona una interfaz de usuario consistente para acciones y formularios.
+Un componente de botón accesible y personalizable que se adapta al sistema de diseño de la aplicación.
 
 ## Características
 
-- Múltiples variantes (default, destructive, outline, secondary, ghost, link)
-- Diferentes tamaños (default, sm, lg, icon)
-- Soporte para estado disabled
-- Totalmente accesible
-- Personalizable con Tailwind CSS
+- ✅ **Accesibilidad completa**: Soporte para lectores de pantalla, navegación por teclado y estados ARIA
+- ✅ **Tema adaptativo**: Se adapta automáticamente al tema claro/oscuro
+- ✅ **Estados de carga**: Incluye spinner animado para estados de carga
+- ✅ **Múltiples variantes**: 9 variantes diferentes para diferentes casos de uso
+- ✅ **Múltiples tamaños**: 6 tamaños diferentes incluyendo iconos
+- ✅ **Animaciones suaves**: Transiciones y efectos hover mejorados
+- ✅ **Contraste optimizado**: Cumple con estándares WCAG para contraste
 
-## Uso
+## Variantes
+
+### Default
+
+El botón principal para acciones importantes.
 
 ```tsx
-import { Button } from '@/shared/components/atoms/Button';
+<Button>Guardar cambios</Button>
+```
 
-export default function MyComponent() {
-  return (
-    <Button variant="default" size="lg">
-      Click me
-    </Button>
-  );
-}
+### Secondary
+
+Para acciones secundarias o complementarias.
+
+```tsx
+<Button variant="secondary">Cancelar</Button>
+```
+
+### Outline
+
+Botón con borde para acciones menos prominentes.
+
+```tsx
+<Button variant="outline">Editar perfil</Button>
+```
+
+### Ghost
+
+Botón transparente para acciones sutiles.
+
+```tsx
+<Button variant="ghost">Ver más</Button>
+```
+
+### Link
+
+Para acciones que parecen enlaces.
+
+```tsx
+<Button variant="link">Leer más</Button>
+```
+
+### Destructive
+
+Para acciones peligrosas como eliminar.
+
+```tsx
+<Button variant="destructive">Eliminar cuenta</Button>
+```
+
+### Success
+
+Para acciones exitosas o confirmaciones.
+
+```tsx
+<Button variant="success">Confirmar</Button>
+```
+
+### Warning
+
+Para advertencias o acciones que requieren atención.
+
+```tsx
+<Button variant="warning">Actualizar</Button>
+```
+
+### Info
+
+Para acciones informativas.
+
+```tsx
+<Button variant="info">Más información</Button>
+```
+
+## Tamaños
+
+### Default
+
+Tamaño estándar para la mayoría de casos.
+
+```tsx
+<Button>Botón normal</Button>
+```
+
+### Small
+
+Para espacios reducidos o acciones menos importantes.
+
+```tsx
+<Button size="sm">Pequeño</Button>
+```
+
+### Large
+
+Para acciones muy importantes o destacadas.
+
+```tsx
+<Button size="lg">Botón grande</Button>
+```
+
+### Extra Large
+
+Para acciones principales muy destacadas.
+
+```tsx
+<Button size="xl">Acción principal</Button>
+```
+
+### Icon
+
+Para botones que solo contienen iconos.
+
+```tsx
+<Button size="icon">
+  <PlusIcon className="h-4 w-4" />
+</Button>
+```
+
+### Icon Small/Large
+
+Variantes de iconos más pequeñas o grandes.
+
+```tsx
+<Button size="icon-sm">
+  <SettingsIcon className="h-3 w-3" />
+</Button>
+
+<Button size="icon-lg">
+  <HeartIcon className="h-6 w-6" />
+</Button>
+```
+
+## Estados
+
+### Loading
+
+Muestra un spinner y deshabilita el botón.
+
+```tsx
+<Button loading>Guardando...</Button>
+```
+
+### Disabled
+
+Deshabilita el botón completamente.
+
+```tsx
+<Button disabled>No disponible</Button>
+```
+
+### Loading + Disabled
+
+Combina ambos estados.
+
+```tsx
+<Button loading disabled>
+  Procesando...
+</Button>
+```
+
+## Accesibilidad
+
+### Atributos ARIA
+
+- `aria-disabled`: Se establece automáticamente cuando el botón está deshabilitado
+- `aria-hidden="true"`: En el spinner de carga para evitar anuncios duplicados
+
+### Navegación por teclado
+
+- **Tab**: Navegación normal
+- **Enter/Space**: Activación del botón
+- **Focus visible**: Anillo de foco visible con colores del tema
+
+### Lectores de pantalla
+
+- El texto del botón se anuncia correctamente
+- El estado de carga se comunica apropiadamente
+- Los estados deshabilitados se anuncian
+
+## Ejemplos de uso
+
+### Formulario de login
+
+```tsx
+<div className="space-y-4">
+  <Button type="submit" loading={isLoading}>
+    {isLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+  </Button>
+  <Button variant="outline" type="button">
+    Crear cuenta
+  </Button>
+</div>
+```
+
+### Acciones de post
+
+```tsx
+<div className="flex gap-2">
+  <Button variant="ghost" size="sm">
+    <HeartIcon className="h-4 w-4" />
+    Me gusta
+  </Button>
+  <Button variant="ghost" size="sm">
+    <CommentIcon className="h-4 w-4" />
+    Comentar
+  </Button>
+  <Button variant="ghost" size="sm">
+    <ShareIcon className="h-4 w-4" />
+    Compartir
+  </Button>
+</div>
+```
+
+### Panel de administración
+
+```tsx
+<div className="flex gap-2">
+  <Button variant="success" size="sm">
+    Aprobar
+  </Button>
+  <Button variant="warning" size="sm">
+    Revisar
+  </Button>
+  <Button variant="destructive" size="sm">
+    Rechazar
+  </Button>
+</div>
 ```
 
 ## Props
 
-<Controls />
+| Prop        | Tipo                                                                                                              | Default     | Descripción                   |
+| ----------- | ----------------------------------------------------------------------------------------------------------------- | ----------- | ----------------------------- |
+| `variant`   | `'default' \| 'secondary' \| 'outline' \| 'ghost' \| 'link' \| 'destructive' \| 'success' \| 'warning' \| 'info'` | `'default'` | Estilo visual del botón       |
+| `size`      | `'default' \| 'sm' \| 'lg' \| 'xl' \| 'icon' \| 'icon-sm' \| 'icon-lg'`                                           | `'default'` | Tamaño del botón              |
+| `loading`   | `boolean`                                                                                                         | `false`     | Muestra spinner y deshabilita |
+| `disabled`  | `boolean`                                                                                                         | `false`     | Deshabilita el botón          |
+| `asChild`   | `boolean`                                                                                                         | `false`     | Renderiza como elemento hijo  |
+| `className` | `string`                                                                                                          | -           | Clases CSS adicionales        |
 
-## Ejemplos
+## Consideraciones de diseño
 
-### Botón por defecto
+### Contraste
 
-<Primary />
+Todos los colores cumplen con los estándares WCAG AA:
 
-### Botón destructivo
+- Contraste mínimo de 4.5:1 para texto normal
+- Contraste mínimo de 3:1 para texto grande
 
-<Story of={ButtonStories.Destructive} />
+### Estados de foco
 
-### Botón outline
+- Anillo de foco visible con colores del tema
+- Transiciones suaves entre estados
+- Indicadores claros para usuarios con discapacidad visual
 
-<Story of={ButtonStories.Outline} />
+### Responsive
 
-### Botón secundario
-
-<Story of={ButtonStories.Secondary} />
-
-### Botón ghost
-
-<Story of={ButtonStories.Ghost} />
-
-### Botón link
-
-<Story of={ButtonStories.Link} />
-
-### Botón pequeño
-
-<Story of={ButtonStories.Small} />
-
-### Botón grande
-
-<Story of={ButtonStories.Large} />
-
-### Botón deshabilitado
-
-<Story of={ButtonStories.Disabled} />
+- Los botones se adaptan automáticamente al tamaño de pantalla
+- Los tamaños de icono mantienen proporciones en móviles
+- El texto se ajusta apropiadamente en espacios reducidos
